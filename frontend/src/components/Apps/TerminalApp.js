@@ -84,14 +84,20 @@ const TerminalApp = ({setOpenApps}) => {
                     </div>
                     <div className="flex space-x-2 items-center pb-1">
                         <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
-                        shadow-inner border border-green-600 transition-all duration-150 hover:scale-110">
+                        shadow-inner border border-green-600 transition-all duration-150 hover:scale-110"
+                        onClick={() => setOpenApps(prev => prev.map(app => {
+                            if (app.name === 'Terminal') {
+                                return { ...app, isMinimized: true };
+                            }
+                            return app;
+                        }))}>
                         </button>
                         <button className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 
                         shadow-inner border border-yellow-600 transition-all duration-150 hover:scale-110">
                         </button>
                         <button className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400
                         shadow-inner border border-red-600 transition-all duration-150 hover:scale-110"
-                        onClick={() => {setOpenApps(prev => prev.filter(app => app !== 'Terminal'))}}>
+                        onClick={() => {setOpenApps(prev => prev.filter(app => app.name !== 'Terminal'))}}>
                         </button>
                     </div>
                 </div>
