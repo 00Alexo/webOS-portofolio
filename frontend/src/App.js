@@ -9,7 +9,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div  className="App w-full h-screen bg-cover bg-center" style={{ backgroundImage: `url(${rashy})` }}>
+      <div  className="App w-full h-screen bg-cover bg-center select-none" style={{ backgroundImage: `url(${rashy})` }}>
           <Taskbar/>
           <Routes> 
             <Route path = "/" element={<Main apps={apps} openApps={openApps} setOpenApps={setOpenApps}/>}/>

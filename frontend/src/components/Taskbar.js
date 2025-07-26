@@ -44,10 +44,19 @@ const Taskbar = () => {
 
 
     return (
-        <div className="fixed flex bottom-0 w-full bg-black/30 backdrop-blur-xl border-t
+        <div className="fixed flex bottom-0 w-full bg-black/30 backdrop-blur-xl border-t z-[100000]
         border-white/10 shadow-[0_-2px_16px_0_rgba(0,0,0,0.25)] text-white pr-3 pl-3 pt-1 pb-1 justify-between">
-            <div className='flex items-center hover:bg-white/5 rounded-lg p-2'>
-                <LayoutGrid size={26} className="cursor-pointer" />
+            <div className='flex items-center hover:bg-white/5 rounded-lg p-1.5 cursor-pointer'>
+                <div className='w-full h-full hover:scale-110'>
+                    <svg width="28" height="28" viewBox="0 0 16 16" className="text-white/80 group-hover:text-white 
+                    transition-colors duration-300">
+                        <path
+                            d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm7 0h5v5H9V9z"
+                            fill="currentColor"
+                            className="group-hover:scale-110 transition-transform duration-300"
+                        />
+                    </svg>
+                </div>
             </div>
             <div className='flex flex-row'>
                 <div className='flex items-center justify-center'>
