@@ -3,7 +3,7 @@ import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Te
 import TerminalApp from './Apps/TerminalApp';
 import GoogleApp from './Apps/GoogleApp';
 
-const Taskbar = ({ openApps, setOpenApps, apps }) => {
+const Taskbar = ({ openApps, setOpenApps, apps, bringToFront }) => {
     const [time, setTime] = useState(new Date());
     const [isArrowOpen, setIsArrowOpen] = useState(false);
 
@@ -44,6 +44,56 @@ const Taskbar = ({ openApps, setOpenApps, apps }) => {
         });
     };
 
+    const handleGoogleClick = () => {
+        if(!openApps.some(app => app.name === 'Google')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'Google',
+                component: <GoogleApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={newAppId} />,
+                isMinimized: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'Google' && app.isMinimized)) {
+            const googleApp = openApps.find(app => app.name === 'Google');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'Google' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(googleApp.id);
+        } else {
+            const googleApp = openApps.find(app => app.name === 'Google');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'Google' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
+
+    const handleTerminalClick = () => {
+        if(!openApps.some(app => app.name === 'Terminal')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'Terminal',
+                component: <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={newAppId} />,
+                isMinimized: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'Terminal' && app.isMinimized)) {
+            const terminalApp = openApps.find(app => app.name === 'Terminal');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'Terminal' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(terminalApp.id);
+        } else {
+            const terminalApp = openApps.find(app => app.name === 'Terminal');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'Terminal' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
+
 
     return (
         <div className="fixed flex bottom-0 w-full bg-black/50 backdrop-blur-2xl border-t z-[100000] max-h-[60px]
@@ -63,26 +113,7 @@ const Taskbar = ({ openApps, setOpenApps, apps }) => {
             <div className='flex flex-row items-center space-x-2'>
                 <div className='hover:bg-white/5 rounded-lg p-2 cursor-pointer'>
                     <div className='hover:scale-110 transition-transform duration-300'>
-                        <svg width="34" height="34" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                        onClick={() => { 
-                            if(!openApps.some(app => app.name === 'Google')) {
-                                const newApp = {
-                                    id: Date.now(),
-                                    name: 'Google',
-                                    component: <GoogleApp setOpenApps={setOpenApps} />,
-                                    isMinimized: false
-                                }
-                                setOpenApps([...openApps, newApp])
-                            }else if(openApps.some(app => app.name === 'Google' && app.isMinimized)) {
-                                setOpenApps(prev => prev.map(app => 
-                                    app.name === 'Google' ? { ...app, isMinimized: false } : app
-                                ));
-                            }else{
-                                setOpenApps(prev => prev.map(app => 
-                                    app.name === 'Google' ? {...app, isMinimized: !app.isMinimized} : app
-                                ));
-                            }
-                        }}>
+                        <svg width="34" height="34" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"  onClick={handleGoogleClick}>
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -96,26 +127,7 @@ const Taskbar = ({ openApps, setOpenApps, apps }) => {
                 <div className='hover:bg-white/5 rounded-lg p-2 cursor-pointer relative'>
                     <div className='hover:scale-110 transition-transform duration-300'>
                         <div className="flex items-center p-3 rounded-lg bg-zinc-800 w-fit cursor-pointer
-                        ring-1 ring-white/40 transition-all duration-200"
-                        onClick={() => { 
-                            if(!openApps.some(app => app.name === 'Terminal')) {
-                                const newApp = {
-                                    id: Date.now(),
-                                    name: 'Terminal',
-                                    component: <TerminalApp setOpenApps={setOpenApps} />,
-                                    isMinimized: false
-                                }
-                                setOpenApps([...openApps, newApp])
-                            }else if(openApps.some(app => app.name === 'Terminal' && app.isMinimized)) {
-                                setOpenApps(prev => prev.map(app => 
-                                    app.name === 'Terminal' ? { ...app, isMinimized: false } : app
-                                ));
-                            }else{
-                                setOpenApps(prev => prev.map(app => 
-                                    app.name === 'Terminal' ? {...app, isMinimized: !app.isMinimized} : app
-                                ));
-                            }
-                        }}>
+                        ring-1 ring-white/40 transition-all duration-200" onClick={handleTerminalClick}>
                             <Terminal size={12} color="white"/>
                         </div>
                     </div>

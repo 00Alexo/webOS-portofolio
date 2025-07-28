@@ -1,7 +1,7 @@
 import { ChevronRight, X, Minus, Square, Plus } from "lucide-react";
 import {useState, useEffect, useRef} from 'react';
 
-const TerminalApp = ({setOpenApps}) => {
+const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
     const [input, setInput] = useState('');
     const [history, setHistory] = useState([
         { type: 'output', content: 'Welcome to the terminal! v1.0.0' },
@@ -27,6 +27,15 @@ const TerminalApp = ({setOpenApps}) => {
         if (e.key === 'Enter') {
             executeCommand(input);
             setInput('');
+        }
+    };
+
+    const handleTerminalClick = () => {
+        if (bringToFront && appId) {
+            bringToFront(appId);
+        }
+        if (inputRef.current) {
+            inputRef.current.focus();
         }
     };
 
@@ -65,7 +74,8 @@ const TerminalApp = ({setOpenApps}) => {
     return (
         <div className="rounded-lg bg-black/90 backdrop-blur-sm border border-white/20
         min-w-[500px] w-[50vw] mx-auto min-h-[500px] h-[50vh] max-h-full inset-4 flex flex-col
-        max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000]">
+        max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000]" 
+        onClick={handleTerminalClick}>
             <div className="bg-gray-800/50 border-b border-white/10 flex-shrink-0">
                 <div className="flex justify-between px-2 pt-2">
                     <div className="flex items-end space-x-1">
@@ -85,24 +95,30 @@ const TerminalApp = ({setOpenApps}) => {
                     <div className="flex space-x-2 items-center pb-1">
                         <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
                         shadow-inner border border-green-600 transition-all duration-150 hover:scale-110"
-                        onClick={() => setOpenApps(prev => prev.map(app => {
-                            if (app.name === 'Terminal') {
-                                return { ...app, isMinimized: true };
-                            }
-                            return app;
-                        }))}>
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenApps(prev => prev.map(app => {
+                                if (app.name === 'Terminal') {
+                                    return { ...app, isMinimized: true };
+                                }
+                                return app;
+                            }));
+                        }}>
                         </button>
                         <button className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 
                         shadow-inner border border-yellow-600 transition-all duration-150 hover:scale-110">
                         </button>
                         <button className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400
                         shadow-inner border border-red-600 transition-all duration-150 hover:scale-110"
-                        onClick={() => {setOpenApps(prev => prev.filter(app => app.name !== 'Terminal'))}}>
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenApps(prev => prev.filter(app => app.name !== 'Terminal'));
+                        }}>
                         </button>
                     </div>
                 </div>
             </div>
-            <div ref={terminalRef} onClick={() => inputRef.current?.focus()}
+            <div ref={terminalRef} onClick={handleTerminalClick}
             className="flex-1 p-4 overflow-y-auto font-mono text-sm text-green-400 cursor-text min-h-0 select-text
                 [&::-webkit-scrollbar]:w-1
                 [&::-webkit-scrollbar-track]:bg-transparent

@@ -6,13 +6,36 @@ import { useState, useEffect } from 'react';
 function App() {
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
+  const [focusedAppId, setFocusedAppId] = useState(null);
+
+  const bringToFront = (appId) =>{
+    setFocusedAppId(appId);
+  }
+
+  const getAppZIndex = (appId) => {
+    const baseZIndex = 1000;
+    return focusedAppId === appId ? baseZIndex + 100 : baseZIndex;
+  };
 
   return (
     <BrowserRouter>
       <div  className="App w-full h-screen bg-cover bg-center select-none" style={{ backgroundImage: `url(${rashy})` }}>
-          <Taskbar openApps={openApps} setOpenApps={setOpenApps} apps={apps}/>
+          <Taskbar 
+            openApps={openApps} 
+            setOpenApps={setOpenApps} 
+            apps={apps} 
+            bringToFront={bringToFront}
+          />
           <Routes> 
-            <Route path = "/" element={<Main apps={apps} openApps={openApps} setOpenApps={setOpenApps}/>}/>
+            <Route path = "/" element={
+              <Main 
+              apps={apps} 
+              openApps={openApps} 
+              setOpenApps={setOpenApps}
+              bringToFront={bringToFront}
+              getAppZIndex={getAppZIndex}
+              />
+            }/>
           </Routes>
       </div>
     </BrowserRouter>
