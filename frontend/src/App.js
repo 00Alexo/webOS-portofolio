@@ -25,15 +25,16 @@ function App() {
             setOpenApps={setOpenApps} 
             apps={apps} 
             bringToFront={bringToFront}
+            focusedAppId={focusedAppId}
           />
           <Routes> 
             <Route path = "/" element={
               <Main 
-              apps={apps} 
-              openApps={openApps} 
-              setOpenApps={setOpenApps}
-              bringToFront={bringToFront}
-              getAppZIndex={getAppZIndex}
+                apps={apps} 
+                openApps={openApps} 
+                setOpenApps={setOpenApps}
+                bringToFront={bringToFront}
+                getAppZIndex={getAppZIndex}
               />
             }/>
           </Routes>

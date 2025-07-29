@@ -3,7 +3,7 @@ import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Te
 import TerminalApp from './Apps/TerminalApp';
 import GoogleApp from './Apps/GoogleApp';
 
-const Taskbar = ({ openApps, setOpenApps, apps, bringToFront }) => {
+const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) => {
     const [time, setTime] = useState(new Date());
     const [isArrowOpen, setIsArrowOpen] = useState(false);
 
@@ -63,9 +63,13 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront }) => {
             bringToFront(googleApp.id);
         } else {
             const googleApp = openApps.find(app => app.name === 'Google');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'Google' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
+            if (focusedAppId === googleApp.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'Google' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(googleApp.id);
+            }
         }
     };
 
@@ -88,12 +92,25 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront }) => {
             bringToFront(terminalApp.id);
         } else {
             const terminalApp = openApps.find(app => app.name === 'Terminal');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'Terminal' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
+            if (focusedAppId === terminalApp.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'Terminal' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(terminalApp.id);
+            }
         }
     };
 
+
+    const isAppActive = (appName) => {
+        const app = openApps.find(app => app.name === appName);
+        return app && focusedAppId === app.id && !app.isMinimized;
+    };
+
+    const isAppOpen = (appName) => {
+        return openApps.some(app => app.name === appName);
+    };
 
     return (
         <div className="fixed flex bottom-0 w-full bg-black/50 backdrop-blur-2xl border-t z-[100000] max-h-[60px]
@@ -111,7 +128,11 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront }) => {
                 </div>
             </div>
             <div className='flex flex-row items-center space-x-2'>
-                <div className='hover:bg-white/5 rounded-lg p-2 cursor-pointer'>
+                <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                    isAppActive('Google') 
+                        ? 'bg-white/20 border border-white/30' 
+                        : 'hover:bg-white/5'
+                }`}>
                     <div className='hover:scale-110 transition-transform duration-300'>
                         <svg width="34" height="34" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"  onClick={handleGoogleClick}>
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -120,19 +141,31 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront }) => {
                             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                         </svg>
                     </div>
-                    {openApps.some(app => app.name === 'Google') && (
-                        <div className="absolute -bottom-1 ml-1 transform w-6 h-0.5 bg-blue-500 rounded-full mb-2"></div>
+                    {isAppOpen('Google') && (
+                        <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                            isAppActive('Google') ? 'bg-blue-500' : 'bg-white   '
+                        }`}></div>
                     )}
                 </div>
-                <div className='hover:bg-white/5 rounded-lg p-2 cursor-pointer relative'>
+                
+                 <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                    isAppActive('Terminal') 
+                        ? 'bg-white/20 border border-white/30' 
+                        : 'hover:bg-white/5'
+                }`}>
                     <div className='hover:scale-110 transition-transform duration-300'>
-                        <div className="flex items-center p-3 rounded-lg bg-zinc-800 w-fit cursor-pointer
-                        ring-1 ring-white/40 transition-all duration-200" onClick={handleTerminalClick}>
+                        <div className={`flex items-center p-3 rounded-lg w-fit cursor-pointer ring-1 transition-all duration-200 ${
+                            isAppActive('Terminal') 
+                                ? 'bg-zinc-700 ring-white/60' 
+                                : 'bg-zinc-800 ring-white/40'
+                        }`} onClick={handleTerminalClick}>
                             <Terminal size={12} color="white"/>
                         </div>
                     </div>
-                    {openApps.some(app => app.name === 'Terminal') && (
-                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-blue-500 rounded-full mb-1"></div>
+                    {isAppOpen('Terminal') && (
+                        <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                            isAppActive('Terminal') ? 'bg-blue-500' : 'bg-white'
+                        }`}></div>
                     )}
                 </div>
                 <div className='hover:bg-white/5 rounded-lg p-2 cursor-pointer'>
