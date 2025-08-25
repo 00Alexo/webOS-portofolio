@@ -3,10 +3,12 @@ import Main from './pages/Main';
 import Taskbar from './components/Taskbar';
 import rashy from './assets/rashy.jpg';
 import { useState, useEffect } from 'react';
+import Login from './pages/Login';
 function App() {
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
   const [focusedAppId, setFocusedAppId] = useState(null);
+
 
   const bringToFront = (appId) =>{
     setFocusedAppId(appId);
@@ -16,6 +18,13 @@ function App() {
     const baseZIndex = 1000;
     return focusedAppId === appId ? baseZIndex + 100 : baseZIndex;
   };
+
+  const [user, setUser] = useState(false);
+
+  if(!user)
+    return (
+      <Login setUser={setUser} user={user}/>
+    )
 
   return (
     <BrowserRouter>

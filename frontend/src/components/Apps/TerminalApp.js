@@ -1,6 +1,5 @@
 import { ChevronRight, X, Minus, Square, Plus } from "lucide-react";
 import {useState, useEffect, useRef} from 'react';
-import Draggable from 'react-draggable';
 
 const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
     const [input, setInput] = useState('');
@@ -73,7 +72,6 @@ const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
     }
 
     return (
-        <Draggable>
         <div className="rounded-lg bg-black/90 backdrop-blur-sm border border-white/20
         min-w-[500px] w-[50vw] mx-auto min-h-[500px] h-[50vh] max-h-full inset-4 flex flex-col
         max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000]" 
@@ -157,7 +155,6 @@ const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
                 </div>
             </div>
         </div>
-        </Draggable>
     );
 }
  
