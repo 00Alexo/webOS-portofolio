@@ -1,7 +1,7 @@
 import { ChevronRight, X, Minus, Square, Plus } from "lucide-react";
 import {useState, useEffect, useRef} from 'react';
 
-const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
+const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     const [input, setInput] = useState('');
     const [history, setHistory] = useState([
         { type: 'output', content: 'Welcome to the terminal! v1.0.0' },
@@ -10,6 +10,9 @@ const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
 
     const terminalRef = useRef(null);
     const inputRef = useRef(null);
+    
+    const currentApp = openApps.find(app => app.id === appId);
+    const isMaxSize = currentApp?.isMaxSize || false;
     
     useEffect(() => {
         if (terminalRef.current) {
@@ -59,7 +62,7 @@ const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
                 break;
 
             case 'whoami':
-                setHistory(prev => [...prev, { type: 'output', content: 'user@ESTIGAYCOAEMAIDATENPULAMEA' }]);
+                setHistory(prev => [...prev, { type: 'output', content: 'user@User' }]);
                 break;
 
             default:
@@ -72,9 +75,9 @@ const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
     }
 
     return (
-        <div className="rounded-lg bg-black/90 backdrop-blur-sm border border-white/20
+        <div className={`rounded-lg bg-black/90 backdrop-blur-sm border border-white/20
         min-w-[500px] w-[50vw] mx-auto min-h-[500px] h-[50vh] max-h-full inset-4 flex flex-col
-        max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000]" 
+        max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000] ${isMaxSize ? ' w-[100vw] h-[calc(100vh-61px)] rounded-none' : ' '}`} 
         onClick={handleTerminalClick}>
             <div className="bg-gray-800/50 border-b border-white/10 flex-shrink-0">
                 <div className="flex justify-between px-2 pt-2">
@@ -106,7 +109,16 @@ const TerminalApp = ({setOpenApps, bringToFront, appId}) => {
                         }}>
                         </button>
                         <button className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 
-                        shadow-inner border border-yellow-600 transition-all duration-150 hover:scale-110">
+                        shadow-inner border border-yellow-600 transition-all duration-150 hover:scale-110"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenApps(prev => prev.map(app => {
+                                if (app.name === 'Terminal') {
+                                    return { ...app, isMaxSize: !app.isMaxSize };
+                                }
+                                return app;
+                            }));
+                        }}>
                         </button>
                         <button className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400
                         shadow-inner border border-red-600 transition-all duration-150 hover:scale-110"

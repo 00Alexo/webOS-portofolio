@@ -1,5 +1,6 @@
 import { Terminal } from "lucide-react";
 import TerminalApp from "../components/Apps/TerminalApp";
+import GoogleApp from "../components/Apps/GoogleApp";
 
 const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
     const handleAppClick = (appId) => {
@@ -12,8 +13,9 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
             const newApp = {
                 id: newAppId,
                 name: 'Terminal',
-                component: <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={newAppId} />,
-                isMinimized: false
+                component: null, 
+                isMinimized: false,
+                isMaxSize: false
             }
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
@@ -41,19 +43,29 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
             </div>
             <div>
                 {/* {openApps.some(app => app.name === 'Terminal') && <TerminalApp setOpenApps={setOpenApps}/>} */}
-                {openApps.map(app => (
-                    <div 
-                        className="flex absolute top-5 left-[50%] -translate-x-1/2"
-                        key={app.id} 
-                        style={{ 
-                            display: app.isMinimized ? 'none' : 'block',
-                            zIndex: getAppZIndex(app.id)
-                        }}
-                        onClick={() => handleAppClick(app.id)}
-                    >
-                        {app.component}
-                    </div>
-                ))}
+                {openApps.map(app => {
+                    // Update the component with current openApps for apps that need it
+                    let updatedComponent = app.component;
+                    if (app.name === 'Terminal') {
+                        updatedComponent = <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                    } else if (app.name === 'Google') {
+                        updatedComponent = <GoogleApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                    }
+                    
+                    return (
+                        <div 
+                            className={`flex absolute left-[50%] -translate-x-1/2 ${app.isMaxSize ? 'top-0' : 'top-5'}`}
+                            key={app.id} 
+                            style={{ 
+                                display: app.isMinimized ? 'none' : 'block',
+                                zIndex: getAppZIndex(app.id)
+                            }}
+                            onClick={() => handleAppClick(app.id)}
+                        >
+                            {updatedComponent}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

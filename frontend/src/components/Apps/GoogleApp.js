@@ -1,7 +1,7 @@
 import { ChevronRight, Plus, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-const GoogleApp = ({setOpenApps, bringToFront, appId}) => {
+const GoogleApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     const [allowInteraction, setAllowInteraction] = useState(false);
     const iframeRef = useRef(null);
 
@@ -35,9 +35,12 @@ const GoogleApp = ({setOpenApps, bringToFront, appId}) => {
         };
     }, [appId]);
 
+    const currentApp = openApps.find(app => app.id === appId);
+    const isMaxSize = currentApp?.isMaxSize || false;
+
     return (
         <div 
-            className="flex flex-col" 
+            className={`flex flex-col ${isMaxSize ? ' w-[100vw] h-[calc(100vh-61px)] rounded-none' : ' '}`}
             data-google-app={appId}
         >
             <div className="flex justify-end px-2 pt-2 items-center bg-white/90 backdrop-blur-sm border-b border-white/20 rounded-t-lg">
@@ -55,7 +58,16 @@ const GoogleApp = ({setOpenApps, bringToFront, appId}) => {
                     }}>
                     </button>
                     <button className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 
-                    shadow-inner border border-yellow-600 transition-all duration-150 hover:scale-110">
+                    shadow-inner border border-yellow-600 transition-all duration-150 hover:scale-110"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenApps(prev => prev.map(app => {
+                            if (app.name === 'Google') {
+                                return { ...app, isMaxSize: !app.isMaxSize };
+                            }
+                            return app;
+                        }));
+                    }}>
                     </button>
                     <button className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400
                     shadow-inner border border-red-600 transition-all duration-150 hover:scale-110"
@@ -70,7 +82,11 @@ const GoogleApp = ({setOpenApps, bringToFront, appId}) => {
                 <iframe 
                     ref={iframeRef}
                     src="https://www.google.com/webhp?igu=1" 
-                    className="min-w-[600px] min-h-[500px] h-[800px] mx-auto rounded-b-lg"
+                    className={`mx-auto rounded-b-lg ${
+                        isMaxSize 
+                            ? 'w-full h-[calc(100vh-87px)] rounded-none' 
+                            : 'min-w-[600px] min-h-[500px] h-[800px]'
+                    }`}
                     style={{ 
                         pointerEvents: allowInteraction ? 'auto' : 'none'
                     }}

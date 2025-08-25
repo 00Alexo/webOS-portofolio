@@ -50,8 +50,9 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
             const newApp = {
                 id: newAppId,
                 name: 'Google',
-                component: <GoogleApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={newAppId} />,
-                isMinimized: false
+                component: null, 
+                isMinimized: false,
+                isMaxSize: false
             }
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
@@ -80,7 +81,8 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 id: newAppId,
                 name: 'Terminal',
                 component: <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={newAppId} />,
-                isMinimized: false
+                isMinimized: false,
+                isMaxSize: false
             }
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
