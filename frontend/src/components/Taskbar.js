@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Terminal} from 'lucide-react';
+import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Terminal, Globe2} from 'lucide-react';
 import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
 import cfr from '../assets/cfr.png';
+import vending from '../assets/vending.png';
 
 const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) => {
     const [time, setTime] = useState(new Date());
     const [isArrowOpen, setIsArrowOpen] = useState(false);
-    console.log(openApps);
 
     useEffect(() =>{
         const timer = setInterval(() => {
@@ -166,6 +166,36 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
         }
     };
 
+    const handleGeoExplorerClick = () => {
+        if(!openApps.some(app => app.name === 'GeoExplorer')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'GeoExplorer',
+                component: null,
+                isMinimized: false,
+                isMaxSize: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'GeoExplorer' && app.isMinimized)) {
+            const GeoExplorer = openApps.find(app => app.name === 'GeoExplorer');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'GeoExplorer' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(GeoExplorer.id);
+        } else {
+            const GeoExplorer = openApps.find(app => app.name === 'GeoExplorer');
+            if (focusedAppId === GeoExplorer.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'GeoExplorer' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(GeoExplorer.id);
+            }
+        }
+    };
+
     const handleCfrClick = () => {
         if(!openApps.some(app => app.name === 'CfrApp')) {
             const newAppId = Date.now();
@@ -222,6 +252,36 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 ));
             } else {
                 bringToFront(MeowFeeder.id);
+            }
+        }
+    };
+
+    const handleMyVendingMachineClick = () => {
+        if(!openApps.some(app => app.name === 'MyVendingMachine')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'MyVendingMachine',
+                component: null,
+                isMinimized: false,
+                isMaxSize: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'MyVendingMachine' && app.isMinimized)) {
+            const MyVendingMachine = openApps.find(app => app.name === 'MyVendingMachine');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'MyVendingMachine' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(MyVendingMachine.id);
+        } else {
+            const MyVendingMachine = openApps.find(app => app.name === 'MyVendingMachine');
+            if (focusedAppId === MyVendingMachine.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'MyVendingMachine' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(MyVendingMachine.id);
             }
         }
     };
@@ -370,6 +430,48 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                         {isAppOpen('MeowFeeder') && (
                             <div className={`absolute -bottom-1 transform right-3.5 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
                                 isAppActive('MeowFeeder') ? 'bg-blue-400' : 'bg-white'
+                            }`}></div>
+                        )}
+                    </div>
+                )}
+
+                {openApps.some(app => app.name === 'GeoExplorer') && ( 
+                    <div className={`rounded-lg p-1 cursor-pointer relative transition-all duration-200 ${
+                        isAppActive('GeoExplorer') 
+                            ? 'bg-white/20 border border-white/30' 
+                            : 'hover:bg-white/5'
+                    }`}>
+                        <div className='hover:scale-110 transition-transform duration-300'>
+                            <div className={`flex items-center p-0.5 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
+                            onClick={handleGeoExplorerClick}>
+                                <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-lg border border-[#5F5FDF] scale-110">
+                                    <Globe2 className="text-xl text-[#5F5FDF]" />
+                                </div>
+                            </div>
+                        </div>
+                        {isAppOpen('GeoExplorer') && (
+                            <div className={`absolute -bottom-1 transform right-3.5 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                                isAppActive('GeoExplorer') ? 'bg-blue-400' : 'bg-white'
+                            }`}></div>
+                        )}
+                    </div>
+                )}
+
+                {openApps.some(app => app.name === 'MyVendingMachine') && ( 
+                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                        isAppActive('MyVendingMachine') 
+                            ? 'bg-white/20 border border-white/30' 
+                            : 'hover:bg-white/5'
+                    }`}>
+                        <div className='hover:scale-110 transition-transform duration-300'>
+                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
+                            onClick={handleMyVendingMachineClick}>
+                                <img src={vending} width="22" height="22" className="scale-[140%]" />
+                            </div>
+                        </div>
+                        {isAppOpen('MyVendingMachine') && (
+                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                                isAppActive('MyVendingMachine') ? 'bg-blue-400' : 'bg-white'
                             }`}></div>
                         )}
                     </div>

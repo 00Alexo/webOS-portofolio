@@ -1,13 +1,16 @@
-import { Terminal } from "lucide-react";
+import { Globe, Globe2, Terminal } from "lucide-react";
 import TerminalApp from "../components/Apps/TerminalApp";
 import GoogleApp from "../components/Apps/GoogleApp";
 import ChessBirdApp from "../components/Apps/ChessBirdApp";
 import FlappyBirdApp from "../components/Apps/FlappyBirdApp";
 import MeowFeederApp from "../components/Apps/MeowFeederApp";
+import GeoExplorerApp from "../components/Apps/GeoExplorerApp";
+import MyVendingMachineApp from "../components/Apps/MyVendingMachineApp";
 import CfrApp from "../components/Apps/CfrApp";
 import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
 import cfr from '../assets/cfr.png';
+import vending from '../assets/vending.png';
 
 const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedAppId}) => {
     const handleAppClick = (appId) => {
@@ -139,10 +142,60 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
             ));
         }
     };
+
+    const openGeoExplorer = () => {
+        if(!openApps.some(app => app.name === 'GeoExplorer')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'GeoExplorer',
+                component: null, 
+                isMinimized: false,
+                isMaxSize: true
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'GeoExplorer' && app.isMinimized)) {
+            const GeoExplorer = openApps.find(app => app.name === 'GeoExplorer');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'GeoExplorer' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(GeoExplorer.id);
+        } else {
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'GeoExplorer' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
+
+    const openMyVendingMachine = () => {
+        if(!openApps.some(app => app.name === 'MyVendingMachine')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'MyVendingMachine',
+                component: null, 
+                isMinimized: false,
+                isMaxSize: true
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'MyVendingMachine' && app.isMinimized)) {
+            const MyVendingMachine = openApps.find(app => app.name === 'MyVendingMachine');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'MyVendingMachine' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(MyVendingMachine.id);
+        } else {
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'MyVendingMachine' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
     
     return (
         <div>
-            <div className="p-3 flex gap-4">
+            <div className="p-3 flex gap-4 flex-wrap">
                 <div className="flex items-center p-3 rounded-lg bg-zinc-800 w-fit cursor-pointer
                 ring-1 ring-white/40 hover:bg-white/10 transition-all duration-200"
                 onClick={openTerminal}>
@@ -170,6 +223,18 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                         <span className="text-white font-bold text-sm p-0">MF</span>
                     </div>
                 </div>
+
+                <div className="flex items-center py-1 px-2 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
+                onClick={openGeoExplorer}>
+                    <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-lg border border-[#5F5FDF] scale-110">
+                        <Globe2 className="text-xl text-[#5F5FDF]" />
+                    </div>
+                </div>
+
+                <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
+                onClick={openMyVendingMachine}>
+                    <img src={vending} width="28" height="28" className="scale-150"/>
+                </div>
             </div>
             <div>
                 {openApps.map(app => {
@@ -186,6 +251,10 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                         updatedComponent = <CfrApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId}/>;
                     } else if (app.name === "MeowFeeder"){
                         updatedComponent = <MeowFeederApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
+                    } else if (app.name === "GeoExplorer"){
+                        updatedComponent = <GeoExplorerApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
+                    } else if (app.name === "MyVendingMachine"){
+                        updatedComponent = <MyVendingMachineApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
                     }
                     
                     

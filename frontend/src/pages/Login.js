@@ -54,10 +54,17 @@ const Login = ({user, setUser}) => {
             } else if (e.key === 'Escape' && inLogin) {
                 setInLogin(false);
             }
+        }}
+        onClick={(e) => {
+            if (!inLogin && e.target === e.currentTarget) {
+                setInLogin(true);
+            }
         }}>
+            <div className="absolute top-2 left-2 z-50 text-white"> Hint: any password</div>
             <div className={`absolute inset-0 backdrop-blur-md transition-opacity duration-500 ease-in-out ${inLogin ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}></div>
 
-            <div className={`absolute inset-0 flex justify-center transition-opacity duration-500 ease-in-out ${inLogin ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`absolute inset-0 flex justify-center transition-opacity duration-500 ease-in-out ${inLogin ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                 onClick={() => setInLogin(true)}>
                 <div className="flex flex-col text-center justify-between mt-[7vh] text-white [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">
                     <div>
                         <div className="text-[7rem] font-light leading-none mb-2">
@@ -69,13 +76,18 @@ const Login = ({user, setUser}) => {
                     </div>
                     <div>
                         <p className="text-slate-200 mb-6 font-thin text-sm [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%),_0_0_4px_rgb(0_0_0_/_30%)]">
-                            Press enter to continue
+                            Click or press enter to continue
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div className={`absolute inset-0 flex justify-center items-center flex-col transition-opacity duration-500 ease-in-out ${inLogin ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div className={`absolute inset-0 flex justify-center items-center flex-col transition-opacity duration-500 ease-in-out ${inLogin ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                 onClick={(e) => {
+                     if (e.target === e.currentTarget) {
+                         handleLogin();
+                     }
+                 }}>
                 <form onSubmit={handleLogin} className="relative z-10 flex gap-4 flex-col items-center">
                     <div className="rounded-full bg-white p-7 w-fit">
                         <User size={96} color="grey"> </User>
@@ -117,7 +129,7 @@ const Login = ({user, setUser}) => {
                     )}
                 </form>
                 <p className="text-slate-200 mt-6 font-thin text-sm [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%),_0_0_4px_rgb(0_0_0_/_30%)]">
-                    Press enter to continue
+                    Click or press enter to continue
                 </p>
             </div>
         </div>
