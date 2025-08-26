@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Terminal} from 'lucide-react';
-import TerminalApp from './Apps/TerminalApp';
-import GoogleApp from './Apps/GoogleApp';
-import FlappyBirdApp from './Apps/FlappyBirdApp';
 import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
+import cfr from '../assets/cfr.png';
 
 const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) => {
     const [time, setTime] = useState(new Date());
@@ -168,6 +166,66 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
         }
     };
 
+    const handleCfrClick = () => {
+        if(!openApps.some(app => app.name === 'CfrApp')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'CfrApp',
+                component: null,
+                isMinimized: false,
+                isMaxSize: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'CfrApp' && app.isMinimized)) {
+            const CfrApp = openApps.find(app => app.name === 'CfrApp');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'CfrApp' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(CfrApp.id);
+        } else {
+            const CfrApp = openApps.find(app => app.name === 'CfrApp');
+            if (focusedAppId === CfrApp.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'CfrApp' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(CfrApp.id);
+            }
+        }
+    };
+
+    const handleMeowFeederClick = () => {
+        if(!openApps.some(app => app.name === 'MeowFeeder')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'MeowFeeder',
+                component: null,
+                isMinimized: false,
+                isMaxSize: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'MeowFeeder' && app.isMinimized)) {
+            const MeowFeeder = openApps.find(app => app.name === 'MeowFeeder');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'MeowFeeder' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(MeowFeeder.id);
+        } else {
+            const MeowFeeder = openApps.find(app => app.name === 'MeowFeeder');
+            if (focusedAppId === MeowFeeder.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'MeowFeeder' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(MeowFeeder.id);
+            }
+        }
+    };
+
 
     const isAppActive = (appName) => {
         const app = openApps.find(app => app.name === appName);
@@ -270,6 +328,48 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                         {isAppOpen('ChessBird') && (
                             <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
                                 isAppActive('ChessBird') ? 'bg-blue-400' : 'bg-white'
+                            }`}></div>
+                        )}
+                    </div>
+                )}
+
+                {openApps.some(app => app.name === 'CfrApp') && ( 
+                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                        isAppActive('CfrApp') 
+                            ? 'bg-white/20 border border-white/30' 
+                            : 'hover:bg-white/5'
+                    }`}>
+                        <div className='hover:scale-110 transition-transform duration-300'>
+                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
+                            onClick={handleCfrClick}>
+                                <img src={cfr} width="22" height="22" className="scale-[140%]" />
+                            </div>
+                        </div>
+                        {isAppOpen('CfrApp') && (
+                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                                isAppActive('CfrApp') ? 'bg-blue-400' : 'bg-white'
+                            }`}></div>
+                        )}
+                    </div>
+                )}
+
+                {openApps.some(app => app.name === 'MeowFeeder') && ( 
+                    <div className={`rounded-lg p-1 cursor-pointer relative transition-all duration-200 ${
+                        isAppActive('MeowFeeder') 
+                            ? 'bg-white/20 border border-white/30' 
+                            : 'hover:bg-white/5'
+                    }`}>
+                        <div className='hover:scale-110 transition-transform duration-300'>
+                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
+                            onClick={handleMeowFeederClick}>
+                                <div className="w-9 h-9 rounded-lg bg-pink-300 flex items-center justify-center">
+                                    <span className="text-white font-bold text-sm p-0">MF</span>
+                                </div>
+                            </div>
+                        </div>
+                        {isAppOpen('MeowFeeder') && (
+                            <div className={`absolute -bottom-1 transform right-3.5 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                                isAppActive('MeowFeeder') ? 'bg-blue-400' : 'bg-white'
                             }`}></div>
                         )}
                     </div>

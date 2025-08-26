@@ -44,6 +44,7 @@ function App() {
                 setOpenApps={setOpenApps}
                 bringToFront={bringToFront}
                 getAppZIndex={getAppZIndex}
+                focusedAppId={focusedAppId}
               />
             }/>
           </Routes>

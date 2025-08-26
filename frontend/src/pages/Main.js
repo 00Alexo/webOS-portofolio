@@ -3,10 +3,13 @@ import TerminalApp from "../components/Apps/TerminalApp";
 import GoogleApp from "../components/Apps/GoogleApp";
 import ChessBirdApp from "../components/Apps/ChessBirdApp";
 import FlappyBirdApp from "../components/Apps/FlappyBirdApp";
+import MeowFeederApp from "../components/Apps/MeowFeederApp";
+import CfrApp from "../components/Apps/CfrApp";
 import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
+import cfr from '../assets/cfr.png';
 
-const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
+const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedAppId}) => {
     const handleAppClick = (appId) => {
         console.log('test');
         bringToFront(appId);
@@ -86,6 +89,56 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
             ));
         }
     };
+
+    const openCfr = () => {
+        if(!openApps.some(app => app.name === 'CfrApp')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'CfrApp',
+                component: null, 
+                isMinimized: false,
+                isMaxSize: true
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'CfrApp' && app.isMinimized)) {
+            const CfrApp = openApps.find(app => app.name === 'CfrApp');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'CfrApp' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(CfrApp.id);
+        } else {
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'CfrApp' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
+
+    const openMeowFeeder = () => {
+        if(!openApps.some(app => app.name === 'MeowFeeder')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'MeowFeeder',
+                component: null, 
+                isMinimized: false,
+                isMaxSize: true
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'MeowFeeder' && app.isMinimized)) {
+            const MeowFeeder = openApps.find(app => app.name === 'MeowFeeder');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'MeowFeeder' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(MeowFeeder.id);
+        } else {
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'MeowFeeder' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
     
     return (
         <div>
@@ -105,19 +158,34 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
                 onClick={openChessBird}>
                     <img src={chess} width="28" height="28" className="scale-150"/>
                 </div>
+
+                <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
+                onClick={openCfr}>
+                    <img src={cfr} width="22" height="22" className="scale-150"/>
+                </div>
+
+                <div className="flex items-center py-1 px-2 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
+                onClick={openMeowFeeder}>
+                    <div className="w-10 h-10 rounded-lg bg-pink-300 flex items-center justify-center">
+                        <span className="text-white font-bold text-sm p-0">MF</span>
+                    </div>
+                </div>
             </div>
             <div>
-                {/* {openApps.some(app => app.name === 'Terminal') && <TerminalApp setOpenApps={setOpenApps}/>} */}
                 {openApps.map(app => {
                     let updatedComponent = app.component;
                     if (app.name === 'Terminal') {
-                        updatedComponent = <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                        updatedComponent = <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId}/>;
                     } else if (app.name === 'Google') {
-                        updatedComponent = <GoogleApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                        updatedComponent = <GoogleApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId}/>;
                     } else if (app.name === "FlappyBird"){
-                        updatedComponent = <FlappyBirdApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                        updatedComponent = <FlappyBirdApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId}/>;
                     } else if (app.name === "ChessBird"){
-                        updatedComponent = <ChessBirdApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                        updatedComponent = <ChessBirdApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId}/>;
+                    } else if (app.name === "CfrApp"){
+                        updatedComponent = <CfrApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId}/>;
+                    } else if (app.name === "MeowFeeder"){
+                        updatedComponent = <MeowFeederApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
                     }
                     
                     

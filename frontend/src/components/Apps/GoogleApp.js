@@ -1,9 +1,15 @@
 import { ChevronRight, Plus, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-const GoogleApp = ({setOpenApps, bringToFront, appId, openApps}) => {
+const GoogleApp = ({setOpenApps, bringToFront, appId, openApps, focusedAppId}) => {
     const [allowInteraction, setAllowInteraction] = useState(true);
     const iframeRef = useRef(null);
+
+    useEffect(() => {
+        if (focusedAppId === appId) {
+            setAllowInteraction(true);
+        }
+    }, [focusedAppId, appId]);
 
     const handleAppClick = () => {
         if (bringToFront && appId) {

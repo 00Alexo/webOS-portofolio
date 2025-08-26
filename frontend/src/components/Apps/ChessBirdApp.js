@@ -1,8 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 
-const ChessBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
+const ChessBirdApp = ({setOpenApps, bringToFront, appId, openApps, focusedAppId}) => {
     const [allowInteraction, setAllowInteraction] = useState(true);
     const iframeRef = useRef(null);
+
+    useEffect(() => {
+        if (focusedAppId === appId) {
+            setAllowInteraction(true);
+        }
+    }, [focusedAppId, appId]);
 
     const handleAppClick = () => {
         if (bringToFront && appId) {
