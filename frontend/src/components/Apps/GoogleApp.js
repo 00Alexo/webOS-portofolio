@@ -40,10 +40,10 @@ const GoogleApp = ({setOpenApps, bringToFront, appId, openApps}) => {
 
     return (
         <div 
-            className={`flex flex-col ${isMaxSize ? ' w-[100vw] h-[calc(100vh-61px)] rounded-none' : ' '}`}
+            className={`flex flex-col ${isMaxSize ? 'w-[100vw] h-[calc(100vh-58px)] rounded-none' : ' '}`}
             data-google-app={appId}
         >
-            <div className="flex px-2 pt-2 justify-end bg-white/90 backdrop-blur-sm border-b border-white/20 rounded-t-lg">
+            <div className={`flex px-2 pt-2 justify-end bg-white/90 backdrop-blur-sm border-b border-white/20 ${isMaxSize ? 'rounded-none' : 'rounded-t-lg'}`}>
                 <div className="flex space-x-2 items-center pb-1">
                     <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
                     shadow-inner border border-green-600 transition-all duration-150 hover:scale-110"
@@ -78,14 +78,14 @@ const GoogleApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                     </button>
                 </div>
             </div>
-            <div className="relative">
+            <div className="relative h-full w-full">
                 <iframe 
                     ref={iframeRef}
                     src="https://www.google.com/webhp?igu=1" 
-                    className={`mx-auto rounded-b-lg ${
+                    className={`mx-auto ${
                         isMaxSize 
-                            ? 'w-full h-[calc(100vh-87px)] rounded-none' 
-                            : 'min-w-[600px] min-h-[500px] h-[800px]'
+                            ? 'w-full h-[calc(100vh-85px)] rounded-none' 
+                            : 'min-w-[600px] min-h-[500px] h-[800px] rounded-b-lg'
                     }`}
                     style={{ 
                         pointerEvents: allowInteraction ? 'auto' : 'none'

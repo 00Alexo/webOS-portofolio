@@ -123,7 +123,7 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
                     
                     return (
                         <div 
-                            className={`flex absolute left-[50%] -translate-x-1/2 ${app.isMaxSize ? 'top-0' : 'top-5'}`}
+                            className={`flex absolute left-[50%] -translate-x-1/2 ${app.isMaxSize ? 'top-0 w-[100vw] h-[calc(100vh-58px)]' : 'top-5'}`}
                             key={app.id} 
                             style={{ 
                                 display: app.isMinimized ? 'none' : 'block',

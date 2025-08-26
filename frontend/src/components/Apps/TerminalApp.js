@@ -75,9 +75,8 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     }
 
     return (
-        <div className={`rounded-lg bg-black/90 backdrop-blur-sm border border-white/20
-        min-w-[500px] w-[50vw] mx-auto min-h-[500px] h-[50vh] max-h-full inset-4 flex flex-col
-        max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000] ${isMaxSize ? ' w-[100vw] h-[calc(100vh-61px)] rounded-none' : ' '}`} 
+        <div className={`bg-black/90 backdrop-blur-sm border border-white/20 min-w-[500px] mx-auto min-h-[500px] max-h-full inset-4 flex flex-col
+        max-w-full overflow-hidden shadow-lg shadow-black/80 text-white z-[1000] ${isMaxSize ? ' w-[100vw] h-[calc(100vh-58px)] rounded-none' : 'w-[50vw] h-[50vh] rounded-lg'}`} 
         onClick={handleTerminalClick}>
             <div className="bg-gray-800/50 border-b border-white/10 flex-shrink-0">
                 <div className="flex justify-between px-2 pt-2">
