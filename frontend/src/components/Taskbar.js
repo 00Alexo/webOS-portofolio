@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Terminal} from 'lucide-react';
 import TerminalApp from './Apps/TerminalApp';
 import GoogleApp from './Apps/GoogleApp';
+import FlappyBirdApp from './Apps/FlappyBirdApp';
+import red from '../assets/Red.png';
 
 const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) => {
     const [time, setTime] = useState(new Date());
     const [isArrowOpen, setIsArrowOpen] = useState(false);
+    console.log(openApps);
 
     useEffect(() =>{
         const timer = setInterval(() => {
@@ -80,7 +83,7 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
             const newApp = {
                 id: newAppId,
                 name: 'Terminal',
-                component: <TerminalApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={newAppId} />,
+                component: null,
                 isMinimized: false,
                 isMaxSize: false
             }
@@ -100,6 +103,36 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 ));
             } else {
                 bringToFront(terminalApp.id);
+            }
+        }
+    };
+
+    const handleFlappyBirdClick = () => {
+        if(!openApps.some(app => app.name === 'FlappyBird')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'FlappyBird',
+                component: null,
+                isMinimized: false,
+                isMaxSize: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'FlappyBird' && app.isMinimized)) {
+            const flappyBirdApp = openApps.find(app => app.name === 'FlappyBird');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'FlappyBird' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(flappyBirdApp.id);
+        } else {
+            const FlappyBirdApp = openApps.find(app => app.name === 'FlappyBird');
+            if (focusedAppId === FlappyBirdApp.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'FlappyBird' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(FlappyBirdApp.id);
             }
         }
     };
@@ -145,12 +178,12 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                     </div>
                     {isAppOpen('Google') && (
                         <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                            isAppActive('Google') ? 'bg-blue-500' : 'bg-white   '
+                            isAppActive('Google') ? 'bg-blue-400' : 'bg-white   '
                         }`}></div>
                     )}
                 </div>
                 
-                 <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
                     isAppActive('Terminal') 
                         ? 'bg-white/20 border border-white/30' 
                         : 'hover:bg-white/5'
@@ -166,14 +199,29 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                     </div>
                     {isAppOpen('Terminal') && (
                         <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                            isAppActive('Terminal') ? 'bg-blue-500' : 'bg-white'
+                            isAppActive('Terminal') ? 'bg-blue-400' : 'bg-white'
                         }`}></div>
                     )}
                 </div>
-                <div className='hover:bg-white/5 rounded-lg p-2 cursor-pointer'>
-                    <div className='hover:scale-110 transition-transform duration-300'>
-                        test3
-                    </div>
+
+                <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                    isAppActive('FlappyBird') 
+                        ? 'bg-white/20 border border-white/30' 
+                        : 'hover:bg-white/5'
+                }`}>
+                    {openApps.some(app => app.name === 'FlappyBird') && ( 
+                        <div className='hover:scale-110 transition-transform duration-300'>
+                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
+                            onClick={handleFlappyBirdClick}>
+                                <img src={red} width="28" height="28" className="scale-[140%]" />
+                            </div>
+                        </div>
+                    )}
+                    {isAppOpen('FlappyBird') && (
+                        <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                            isAppActive('FlappyBird') ? 'bg-blue-400' : 'bg-white'
+                        }`}></div>
+                    )}
                 </div>
             </div>
             <div className='flex flex-row'>
