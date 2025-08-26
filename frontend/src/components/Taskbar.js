@@ -4,6 +4,7 @@ import TerminalApp from './Apps/TerminalApp';
 import GoogleApp from './Apps/GoogleApp';
 import FlappyBirdApp from './Apps/FlappyBirdApp';
 import red from '../assets/Red.png';
+import chess from '../assets/chess.png';
 
 const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) => {
     const [time, setTime] = useState(new Date());
@@ -137,6 +138,36 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
         }
     };
 
+    const handleChessBirdClick = () => {
+        if(!openApps.some(app => app.name === 'ChessBird')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'ChessBird',
+                component: null,
+                isMinimized: false,
+                isMaxSize: false
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'ChessBird' && app.isMinimized)) {
+            const ChessBirdApp = openApps.find(app => app.name === 'ChessBird');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'ChessBird' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(ChessBirdApp.id);
+        } else {
+            const ChessBirdApp = openApps.find(app => app.name === 'ChessBird');
+            if (focusedAppId === ChessBirdApp.id) {
+                setOpenApps(prev => prev.map(app => 
+                    app.name === 'ChessBird' ? {...app, isMinimized: true} : app
+                ));
+            } else {
+                bringToFront(ChessBirdApp.id);
+            }
+        }
+    };
+
 
     const isAppActive = (appName) => {
         const app = openApps.find(app => app.name === appName);
@@ -204,25 +235,45 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                     )}
                 </div>
 
-                <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                    isAppActive('FlappyBird') 
-                        ? 'bg-white/20 border border-white/30' 
-                        : 'hover:bg-white/5'
-                }`}>
-                    {openApps.some(app => app.name === 'FlappyBird') && ( 
+                {openApps.some(app => app.name === 'FlappyBird') && ( 
+                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                        isAppActive('FlappyBird') 
+                            ? 'bg-white/20 border border-white/30' 
+                            : 'hover:bg-white/5'
+                    }`}>
                         <div className='hover:scale-110 transition-transform duration-300'>
                             <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
                             onClick={handleFlappyBirdClick}>
                                 <img src={red} width="28" height="28" className="scale-[140%]" />
                             </div>
                         </div>
-                    )}
-                    {isAppOpen('FlappyBird') && (
-                        <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                            isAppActive('FlappyBird') ? 'bg-blue-400' : 'bg-white'
-                        }`}></div>
-                    )}
-                </div>
+                        {isAppOpen('FlappyBird') && (
+                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                                isAppActive('FlappyBird') ? 'bg-blue-400' : 'bg-white'
+                            }`}></div>
+                        )}
+                    </div>
+                )}
+
+                {openApps.some(app => app.name === 'ChessBird') && ( 
+                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
+                        isAppActive('ChessBird') 
+                            ? 'bg-white/20 border border-white/30' 
+                            : 'hover:bg-white/5'
+                    }`}>
+                        <div className='hover:scale-110 transition-transform duration-300'>
+                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
+                            onClick={handleChessBirdClick}>
+                                <img src={chess} width="28" height="28" className="scale-[140%]" />
+                            </div>
+                        </div>
+                        {isAppOpen('ChessBird') && (
+                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
+                                isAppActive('ChessBird') ? 'bg-blue-400' : 'bg-white'
+                            }`}></div>
+                        )}
+                    </div>
+                )}
             </div>
             <div className='flex flex-row'>
                 <div className='flex items-center justify-center'>

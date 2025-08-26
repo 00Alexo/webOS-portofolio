@@ -2,7 +2,7 @@ import { ChevronRight, Plus, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 const GoogleApp = ({setOpenApps, bringToFront, appId, openApps}) => {
-    const [allowInteraction, setAllowInteraction] = useState(false);
+    const [allowInteraction, setAllowInteraction] = useState(true);
     const iframeRef = useRef(null);
 
     const handleAppClick = () => {
@@ -43,7 +43,7 @@ const GoogleApp = ({setOpenApps, bringToFront, appId, openApps}) => {
             className={`flex flex-col ${isMaxSize ? ' w-[100vw] h-[calc(100vh-61px)] rounded-none' : ' '}`}
             data-google-app={appId}
         >
-            <div className="flex justify-between px-2 pt-2 items-center bg-white/90 backdrop-blur-sm border-b border-white/20 rounded-t-lg">
+            <div className="flex px-2 pt-2 justify-end bg-white/90 backdrop-blur-sm border-b border-white/20 rounded-t-lg">
                 <div className="flex space-x-2 items-center pb-1">
                     <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
                     shadow-inner border border-green-600 transition-all duration-150 hover:scale-110"

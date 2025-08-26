@@ -1,11 +1,14 @@
 import { Terminal } from "lucide-react";
 import TerminalApp from "../components/Apps/TerminalApp";
 import GoogleApp from "../components/Apps/GoogleApp";
+import ChessBirdApp from "../components/Apps/ChessBirdApp";
 import FlappyBirdApp from "../components/Apps/FlappyBirdApp";
 import red from '../assets/Red.png';
+import chess from '../assets/chess.png';
 
 const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
     const handleAppClick = (appId) => {
+        console.log('test');
         bringToFront(appId);
     };
 
@@ -58,6 +61,31 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
             ));
         }
     };
+
+    const openChessBird = () => {
+        if(!openApps.some(app => app.name === 'ChessBird')) {
+            const newAppId = Date.now();
+            const newApp = {
+                id: newAppId,
+                name: 'ChessBird',
+                component: null, 
+                isMinimized: false,
+                isMaxSize: true
+            }
+            setOpenApps([...openApps, newApp]);
+            bringToFront(newAppId);
+        } else if(openApps.some(app => app.name === 'ChessBird' && app.isMinimized)) {
+            const ChessBirdApp = openApps.find(app => app.name === 'ChessBird');
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'ChessBird' ? { ...app, isMinimized: false } : app
+            ));
+            bringToFront(ChessBirdApp.id);
+        } else {
+            setOpenApps(prev => prev.map(app => 
+                app.name === 'ChessBird' ? {...app, isMinimized: !app.isMinimized} : app
+            ));
+        }
+    };
     
     return (
         <div>
@@ -72,6 +100,11 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
                 onClick={openFlappyBird}>
                     <img src={red} width="28" height="28" className="scale-150"/>
                 </div>
+
+                <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
+                onClick={openChessBird}>
+                    <img src={chess} width="28" height="28" className="scale-150"/>
+                </div>
             </div>
             <div>
                 {/* {openApps.some(app => app.name === 'Terminal') && <TerminalApp setOpenApps={setOpenApps}/>} */}
@@ -83,7 +116,10 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex}) => {
                         updatedComponent = <GoogleApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
                     } else if (app.name === "FlappyBird"){
                         updatedComponent = <FlappyBirdApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
+                    } else if (app.name === "ChessBird"){
+                        updatedComponent = <ChessBirdApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} />;
                     }
+                    
                     
                     return (
                         <div 

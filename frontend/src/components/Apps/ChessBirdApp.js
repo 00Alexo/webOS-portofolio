@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const FlappyBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
+const ChessBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     const [allowInteraction, setAllowInteraction] = useState(true);
     const iframeRef = useRef(null);
 
@@ -35,7 +35,7 @@ const FlappyBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     }, [appId]);
 
     return (
-        <div className="bg-blue w-screen h-[calc(100vh-60px)]" data-flappy-app={appId}>
+        <div className="bg-blue w-screen h-[calc(100vh-60px)]">
             <div className="flex justify-end px-2 pt-2 bg-white/90 backdrop-blur-sm border-b border-white/20">
                 <div className="flex space-x-2 items-center pb-1">
                     <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
@@ -43,7 +43,7 @@ const FlappyBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                     onClick={(e) => {
                         e.stopPropagation();
                         setOpenApps(prev => prev.map(app => {
-                            if (app.name === 'FlappyBird') {
+                            if (app.name === 'ChessBird') {
                                 return { ...app, isMinimized: true };
                             }
                             return app;
@@ -54,7 +54,7 @@ const FlappyBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                     shadow-inner border border-red-600 transition-all duration-150 hover:scale-110"
                     onClick={(e) => {
                         e.stopPropagation();
-                        setOpenApps(prev => prev.filter(app => app.name !== 'FlappyBird'));
+                        setOpenApps(prev => prev.filter(app => app.name !== 'ChessBird'));
                     }}>
                     </button>
                 </div>
@@ -62,7 +62,7 @@ const FlappyBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
             <div className="relative w-full h-full">
                 <iframe 
                     ref={iframeRef}
-                    src="https://angryflappybird1.netlify.app"
+                    src="https://angry-birds-chess.vercel.app"
                     className="w-full h-full"
                     style={{ 
                         pointerEvents: allowInteraction ? 'auto' : 'none'
@@ -88,4 +88,4 @@ const FlappyBirdApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     );
 }
  
-export default FlappyBirdApp;
+export default ChessBirdApp;
