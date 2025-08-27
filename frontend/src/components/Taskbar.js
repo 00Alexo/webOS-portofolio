@@ -54,8 +54,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'Google',
                 component: null, 
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'Google' && app.isMinimized)) {
@@ -114,8 +120,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'FlappyBird',
                 component: null,
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'FlappyBird' && app.isMinimized)) {
@@ -144,8 +156,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'ChessBird',
                 component: null,
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'ChessBird' && app.isMinimized)) {
@@ -174,8 +192,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'GeoExplorer',
                 component: null,
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'GeoExplorer' && app.isMinimized)) {
@@ -204,8 +228,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'CfrApp',
                 component: null,
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'CfrApp' && app.isMinimized)) {
@@ -234,8 +264,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'MeowFeeder',
                 component: null,
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'MeowFeeder' && app.isMinimized)) {
@@ -264,8 +300,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId }) =>
                 name: 'MyVendingMachine',
                 component: null,
                 isMinimized: false,
-                isMaxSize: false
+                isMaxSize: false,
+                isLoading: true
             }
+            setTimeout(() =>{
+                setOpenApps(prev => prev.map(app => 
+                    app.id === newAppId ? { ...app, isLoading: false } : app
+                ));
+            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
         } else if(openApps.some(app => app.name === 'MyVendingMachine' && app.isMinimized)) {
