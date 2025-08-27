@@ -8,7 +8,8 @@ function App() {
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
   const [focusedAppId, setFocusedAppId] = useState(null);
-
+  const [volume, setVolume] = useState(100);
+  const [brightness, setBrightness] = useState(100);
 
   const bringToFront = (appId) =>{
     setFocusedAppId(appId);
@@ -28,13 +29,21 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="App w-screen h-screen bg-cover bg-center select-none overflow-hidden" style={{ backgroundImage: `url(${rashy})` }}>
+      <div className="App w-screen h-screen bg-cover bg-center select-none overflow-hidden relative" style={{ backgroundImage: `url(${rashy})` }}>
+          <div 
+              className="absolute inset-0 bg-black transition-opacity duration-300 pointer-events-none z-[999999]"
+              style={{ opacity: Math.max(0, (100 - brightness) / 150) }}
+          />
           <Taskbar 
             openApps={openApps} 
             setOpenApps={setOpenApps} 
             apps={apps} 
             bringToFront={bringToFront}
             focusedAppId={focusedAppId}
+            volume={volume}
+            setVolume={setVolume}
+            brightness={brightness}
+            setBrightness={setBrightness}
           />
           <Routes> 
             <Route path = "/" element={
@@ -45,6 +54,8 @@ function App() {
                 bringToFront={bringToFront}
                 getAppZIndex={getAppZIndex}
                 focusedAppId={focusedAppId}
+                volume={volume}
+                setVolume={setVolume}
               />
             }/>
           </Routes>
