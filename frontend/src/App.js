@@ -8,8 +8,19 @@ function App() {
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
   const [focusedAppId, setFocusedAppId] = useState(null);
-  const [volume, setVolume] = useState(100);
-  const [brightness, setBrightness] = useState(100);
+  const [volume, setVolume] = useState(() =>{
+    const vol = localStorage.getItem('volume');
+    return vol ? parseInt(vol) : 100;
+  });
+  const [brightness, setBrightness] = useState(() =>{
+    const bright = localStorage.getItem('brightness');
+    return bright ? parseInt(bright) : 100;
+  });
+
+  useEffect(() =>{
+    localStorage.setItem('volume', volume);
+    localStorage.setItem('brightness', brightness);
+  }, [volume, brightness]);
 
   const bringToFront = (appId) =>{
     setFocusedAppId(appId);

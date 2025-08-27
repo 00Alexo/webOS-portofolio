@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import {ChevronDown, ChevronUp, Wifi, Battery, Settings, Volume2, LayoutGrid, Terminal, Globe2, X, VolumeX, Volume1, SunMedium, SunDim, Sun} from 'lucide-react';
+import {ChevronDown, ChevronUp, Terminal, Globe2} from 'lucide-react';
 import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
 import cfr from '../assets/cfr.png';
 import vending from '../assets/vending.png';
+import QuickSettings from './QuickSettings';
+import WinBar from './WinBar';
 
 const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volume, setVolume, brightness, setBrightness }) => {
     const [time, setTime] = useState(new Date());
@@ -60,296 +62,54 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volu
         });
     };
 
-    const closeApp = (appId) => {
-        setOpenApps(prev => prev.filter(app => app.id !== appId));
-    }
-
-    const closeAll = () =>{
-        setOpenApps([]);
-    }
-
-    const handleGoogleClick = () => {
-        if(!openApps.some(app => app.name === 'Google')) {
+    const handleAppClick = (appName) =>{
+        if(!openApps.some(app => app.name === appName)){
             const newAppId = Date.now();
+
             const newApp = {
                 id: newAppId,
-                name: 'Google',
+                name: appName,
                 component: null, 
                 isMinimized: false,
-                isMaxSize: false,
+                isMaxSize: true,
                 isLoading: true
             }
+
+            if(appName === "Terminal" || appName === "Google")
+                newApp.isMaxSize = false;
+
+            if(appName === "Terminal") {
+                newApp.isLoading = false;
+            }
+
             setTimeout(() =>{
                 setOpenApps(prev => prev.map(app => 
                     app.id === newAppId ? { ...app, isLoading: false } : app
                 ));
             }, 3000);
+
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'Google' && app.isMinimized)) {
-            const googleApp = openApps.find(app => app.name === 'Google');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'Google' ? { ...app, isMinimized: false } : app
+        }else if(openApps.some(app => app.name === appName && app.isMinimized)){
+            const minApp = openApps.find(app => app.name === appName);
+
+            setOpenApps(prev => prev.map(app =>
+                app.name === appName ? { ...app, isMinimized: false } : app
             ));
-            bringToFront(googleApp.id);
-        } else {
-            const googleApp = openApps.find(app => app.name === 'Google');
-            if (focusedAppId === googleApp.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'Google' ? {...app, isMinimized: true} : app
+
+            bringToFront(minApp.id);
+        }else{
+            const bringApp = openApps.find(app => app.name === appName);
+
+            if(focusedAppId === bringApp.id){
+                setOpenApps(prev => prev.map(app =>
+                    app.name === appName ? {...app, isMinimized: true} : app
                 ));
             } else {
-                bringToFront(googleApp.id);
+                bringToFront(bringApp.id);
             }
         }
-    };
-
-    const handleTerminalClick = () => {
-        if(!openApps.some(app => app.name === 'Terminal')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'Terminal',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false
-            }
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'Terminal' && app.isMinimized)) {
-            const terminalApp = openApps.find(app => app.name === 'Terminal');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'Terminal' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(terminalApp.id);
-        } else {
-            const terminalApp = openApps.find(app => app.name === 'Terminal');
-            if (focusedAppId === terminalApp.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'Terminal' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(terminalApp.id);
-            }
-        }
-    };
-
-    const handleFlappyBirdClick = () => {
-        if(!openApps.some(app => app.name === 'FlappyBird')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'FlappyBird',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'FlappyBird' && app.isMinimized)) {
-            const flappyBirdApp = openApps.find(app => app.name === 'FlappyBird');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'FlappyBird' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(flappyBirdApp.id);
-        } else {
-            const FlappyBirdApp = openApps.find(app => app.name === 'FlappyBird');
-            if (focusedAppId === FlappyBirdApp.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'FlappyBird' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(FlappyBirdApp.id);
-            }
-        }
-    };
-
-    const handleChessBirdClick = () => {
-        if(!openApps.some(app => app.name === 'ChessBird')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'ChessBird',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'ChessBird' && app.isMinimized)) {
-            const ChessBirdApp = openApps.find(app => app.name === 'ChessBird');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'ChessBird' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(ChessBirdApp.id);
-        } else {
-            const ChessBirdApp = openApps.find(app => app.name === 'ChessBird');
-            if (focusedAppId === ChessBirdApp.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'ChessBird' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(ChessBirdApp.id);
-            }
-        }
-    };
-
-    const handleGeoExplorerClick = () => {
-        if(!openApps.some(app => app.name === 'GeoExplorer')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'GeoExplorer',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'GeoExplorer' && app.isMinimized)) {
-            const GeoExplorer = openApps.find(app => app.name === 'GeoExplorer');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'GeoExplorer' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(GeoExplorer.id);
-        } else {
-            const GeoExplorer = openApps.find(app => app.name === 'GeoExplorer');
-            if (focusedAppId === GeoExplorer.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'GeoExplorer' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(GeoExplorer.id);
-            }
-        }
-    };
-
-    const handleCfrClick = () => {
-        if(!openApps.some(app => app.name === 'CfrApp')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'CfrApp',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'CfrApp' && app.isMinimized)) {
-            const CfrApp = openApps.find(app => app.name === 'CfrApp');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'CfrApp' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(CfrApp.id);
-        } else {
-            const CfrApp = openApps.find(app => app.name === 'CfrApp');
-            if (focusedAppId === CfrApp.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'CfrApp' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(CfrApp.id);
-            }
-        }
-    };
-
-    const handleMeowFeederClick = () => {
-        if(!openApps.some(app => app.name === 'MeowFeeder')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'MeowFeeder',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'MeowFeeder' && app.isMinimized)) {
-            const MeowFeeder = openApps.find(app => app.name === 'MeowFeeder');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'MeowFeeder' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(MeowFeeder.id);
-        } else {
-            const MeowFeeder = openApps.find(app => app.name === 'MeowFeeder');
-            if (focusedAppId === MeowFeeder.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'MeowFeeder' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(MeowFeeder.id);
-            }
-        }
-    };
-
-    const handleMyVendingMachineClick = () => {
-        if(!openApps.some(app => app.name === 'MyVendingMachine')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'MyVendingMachine',
-                component: null,
-                isMinimized: false,
-                isMaxSize: false,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'MyVendingMachine' && app.isMinimized)) {
-            const MyVendingMachine = openApps.find(app => app.name === 'MyVendingMachine');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'MyVendingMachine' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(MyVendingMachine.id);
-        } else {
-            const MyVendingMachine = openApps.find(app => app.name === 'MyVendingMachine');
-            if (focusedAppId === MyVendingMachine.id) {
-                setOpenApps(prev => prev.map(app => 
-                    app.name === 'MyVendingMachine' ? {...app, isMinimized: true} : app
-                ));
-            } else {
-                bringToFront(MyVendingMachine.id);
-            }
-        }
-    };
-
+    }
 
     const isAppActive = (appName) => {
         const app = openApps.find(app => app.name === appName);
@@ -361,7 +121,7 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volu
     };
 
     return (
-        <div className="fixed flex bottom-0 w-full bg-black/50 backdrop-blur-2xl border-t z-[100000] max-h-[60px]
+        <div className="fixed flex bottom-0 w-full bg-black/50 backdrop-blur-2xl border-t z-[100000] h-[60px]
         border-white/10 shadow-[0_-2px_16px_0_rgba(0,0,0,0.25)] text-white pr-3 pl-3 pt-1 pb-1 justify-between">
             <div className='flex items-center hover:bg-white/5 rounded-lg p-1.5 cursor-pointer'>
                 <div className='w-full h-full hover:scale-110 flex items-center justify-center'
@@ -377,179 +137,90 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volu
                 </div>
 
                 {isWinBarOpen && (
-                    <div className="absolute bottom-full left-0 mb-2 ml-2 backdrop-blur-xl border winbar-area
-                  border-white/20 rounded-lg bg-gradient-to-br from-[#1e2936] to-[#0f1419]
-                    shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] p-4 min-w-[320px] max-h-[400px] z-50 overflow-hidden">
-                        
-                    </div>
+                    <WinBar/>
                 )}
             </div>
+
             <div className='flex flex-row items-center space-x-2'>
-                <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                    isAppActive('Google') 
-                        ? 'bg-white/20 border border-white/30' 
-                        : 'hover:bg-white/5'
-                }`}>
-                    <div className='hover:scale-110 transition-transform duration-300'>
-                        <svg width="34" height="34" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"  onClick={handleGoogleClick}>
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                    </div>
-                    {isAppOpen('Google') && (
-                        <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                            isAppActive('Google') ? 'bg-blue-400' : 'bg-white   '
-                        }`}></div>
-                    )}
-                </div>
-                
-                <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                    isAppActive('Terminal') 
-                        ? 'bg-white/20 border border-white/30' 
-                        : 'hover:bg-white/5'
-                }`}>
-                    <div className='hover:scale-110 transition-transform duration-300'>
-                        <div className={`flex items-center p-3 rounded-lg w-fit cursor-pointer ring-1 transition-all duration-200 ${
-                            isAppActive('Terminal') 
-                                ? 'bg-zinc-700 ring-white/60' 
-                                : 'bg-zinc-800 ring-white/40'
-                        }`} onClick={handleTerminalClick}>
-                            <Terminal size={12} color="white"/>
-                        </div>
-                    </div>
-                    {isAppOpen('Terminal') && (
-                        <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                            isAppActive('Terminal') ? 'bg-blue-400' : 'bg-white'
-                        }`}></div>
-                    )}
-                </div>
-
-                {openApps.some(app => app.name === 'FlappyBird') && ( 
-                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                        isAppActive('FlappyBird') 
-                            ? 'bg-white/20 border border-white/30' 
-                            : 'hover:bg-white/5'
-                    }`}>
-                        <div className='hover:scale-110 transition-transform duration-300'>
-                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
-                            onClick={handleFlappyBirdClick}>
-                                <img src={red} width="28" height="28" className="scale-[140%]" />
-                            </div>
-                        </div>
-                        {isAppOpen('FlappyBird') && (
-                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                                isAppActive('FlappyBird') ? 'bg-blue-400' : 'bg-white'
-                            }`}></div>
-                        )}
-                    </div>
-                )}
-
-                {openApps.some(app => app.name === 'ChessBird') && ( 
-                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                        isAppActive('ChessBird') 
-                            ? 'bg-white/20 border border-white/30' 
-                            : 'hover:bg-white/5'
-                    }`}>
-                        <div className='hover:scale-110 transition-transform duration-300'>
-                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
-                            onClick={handleChessBirdClick}>
-                                <img src={chess} width="28" height="28" className="scale-[140%]" />
-                            </div>
-                        </div>
-                        {isAppOpen('ChessBird') && (
-                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                                isAppActive('ChessBird') ? 'bg-blue-400' : 'bg-white'
-                            }`}></div>
-                        )}
-                    </div>
-                )}
-
-                {openApps.some(app => app.name === 'CfrApp') && ( 
-                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                        isAppActive('CfrApp') 
-                            ? 'bg-white/20 border border-white/30' 
-                            : 'hover:bg-white/5'
-                    }`}>
-                        <div className='hover:scale-110 transition-transform duration-300'>
-                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
-                            onClick={handleCfrClick}>
-                                <img src={cfr} width="22" height="22" className="scale-[140%]" />
-                            </div>
-                        </div>
-                        {isAppOpen('CfrApp') && (
-                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                                isAppActive('CfrApp') ? 'bg-blue-400' : 'bg-white'
-                            }`}></div>
-                        )}
-                    </div>
-                )}
-
-                {openApps.some(app => app.name === 'MeowFeeder') && ( 
-                    <div className={`rounded-lg p-1 cursor-pointer relative transition-all duration-200 ${
-                        isAppActive('MeowFeeder') 
-                            ? 'bg-white/20 border border-white/30' 
-                            : 'hover:bg-white/5'
-                    }`}>
-                        <div className='hover:scale-110 transition-transform duration-300'>
-                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
-                            onClick={handleMeowFeederClick}>
-                                <div className="w-9 h-9 rounded-lg bg-pink-300 flex items-center justify-center">
-                                    <span className="text-white font-bold text-sm p-0">MF</span>
+                {(() => {
+                    const alwaysVisibleApps = [
+                        { name: 'Google' },
+                        { name: 'Terminal' }
+                    ];
+                    
+                    const otherApps = openApps.filter(app => !["Terminal", "Google"].includes(app.name));
+                    
+                    const allApps = [...alwaysVisibleApps, ...otherApps];
+                    
+                    return allApps.map((app) => {
+                        return (
+                            <div key={app.id} className={`rounded-lg cursor-pointer relative transition-all duration-200 ${
+                                isAppActive(app.name) 
+                                    ? 'bg-white/20 border border-white/30' 
+                                    : 'hover:bg-white/5'
+                            }`}>
+                                <div className='p-2 hover:scale-110 transition-transform duration-300 flex items-center justify-center'>
+                                    <div className={`flex items-center rounded-lg cursor-pointer transition-all duration-200`} 
+                                    onClick={() => handleAppClick(app.name)}>
+                                        {app.name === 'FlappyBird' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <img src={red} width="28" height="28" className="scale-[140%]" />
+                                            </div>
+                                        ) : app.name === 'ChessBird' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <img src={chess} width="28" height="28" className="scale-[140%]" />
+                                            </div>
+                                        ) : app.name === 'CfrApp' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <img src={cfr} width="22" height="22" className="scale-[140%]" />
+                                            </div>
+                                        ) : app.name === 'MeowFeeder' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <div className="w-8 h-8 rounded-lg bg-pink-300 flex items-center justify-center">
+                                                    <span className="text-white font-bold text-sm">MF</span>
+                                                </div>
+                                            </div>
+                                        ) : app.name === 'Terminal' ? (
+                                            <div className={`flex items-center justify-center w-8 h-8 rounded-lg cursor-pointer ring-1 transition-all duration-200 ${
+                                                isAppActive('Terminal') 
+                                                    ? 'bg-zinc-700 ring-white/60' 
+                                                    : 'bg-zinc-800 ring-white/40'
+                                            }`}>
+                                                <Terminal size={12} color="white"/>
+                                            </div>
+                                        ) : app.name === 'GeoExplorer' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <div className="h-8 w-8 bg-white rounded-lg flex items-center justify-center shadow-lg border border-[#5F5FDF]">
+                                                    <Globe2 className="text-base text-[#5F5FDF]" />
+                                                </div>
+                                            </div>
+                                        ) : app.name === 'MyVendingMachine' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <img src={vending} width="22" height="22" className="scale-[140%]" />
+                                            </div>
+                                        ) : app.name === 'Google' ? (
+                                            <div className="w-8 h-8 flex items-center justify-center">
+                                                <svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                                </svg>
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </div>
+                                {isAppOpen(app.name) && (
+                                    <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full transition-all duration-200 ${
+                                        isAppActive(app.name) ? 'bg-blue-400' : 'bg-white'
+                                    }`}></div>
+                                )}
                             </div>
-                        </div>
-                        {isAppOpen('MeowFeeder') && (
-                            <div className={`absolute -bottom-1 transform right-3.5 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                                isAppActive('MeowFeeder') ? 'bg-blue-400' : 'bg-white'
-                            }`}></div>
-                        )}
-                    </div>
-                )}
-
-                {openApps.some(app => app.name === 'GeoExplorer') && ( 
-                    <div className={`rounded-lg p-1 cursor-pointer relative transition-all duration-200 ${
-                        isAppActive('GeoExplorer') 
-                            ? 'bg-white/20 border border-white/30' 
-                            : 'hover:bg-white/5'
-                    }`}>
-                        <div className='hover:scale-110 transition-transform duration-300'>
-                            <div className={`flex items-center p-0.5 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
-                            onClick={handleGeoExplorerClick}>
-                                <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-lg border border-[#5F5FDF] scale-110">
-                                    <Globe2 className="text-xl text-[#5F5FDF]" />
-                                </div>
-                            </div>
-                        </div>
-                        {isAppOpen('GeoExplorer') && (
-                            <div className={`absolute -bottom-1 transform right-3.5 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                                isAppActive('GeoExplorer') ? 'bg-blue-400' : 'bg-white'
-                            }`}></div>
-                        )}
-                    </div>
-                )}
-
-                {openApps.some(app => app.name === 'MyVendingMachine') && ( 
-                    <div className={`rounded-lg p-2 cursor-pointer relative transition-all duration-200 ${
-                        isAppActive('MyVendingMachine') 
-                            ? 'bg-white/20 border border-white/30' 
-                            : 'hover:bg-white/5'
-                    }`}>
-                        <div className='hover:scale-110 transition-transform duration-300'>
-                            <div className={`flex items-center p-1 rounded-lg w-fit cursor-pointer transition-all duration-200`} 
-                            onClick={handleMyVendingMachineClick}>
-                                <img src={vending} width="22" height="22" className="scale-[140%]" />
-                            </div>
-                        </div>
-                        {isAppOpen('MyVendingMachine') && (
-                            <div className={`absolute -bottom-1 transform translate-x-1/4 w-6 h-0.5 rounded-full mb-1 transition-all duration-200 ${
-                                isAppActive('MyVendingMachine') ? 'bg-blue-400' : 'bg-white'
-                            }`}></div>
-                        )}
-                    </div>
-                )}
+                        )
+                    })
+                })()}
             </div>
+
             <div className='flex flex-row'>
                 <div className='flex items-center justify-center'>
                     <button 
@@ -569,196 +240,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volu
                 </div>
 
                 {isArrowOpen && (
-                    <div className="absolute bottom-full right-0 mb-2 mr-2 backdrop-blur-xl border notification-area
-                  border-white/20 rounded-lg bg-gradient-to-br from-[#1e2936] to-[#0f1419]
-                    shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] p-4 min-w-[320px] max-h-[400px] z-50 overflow-hidden">
-                        <div className="absolute top-full right-8 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-gray-900/95"></div>
-                        
-                        <div className="mb-4 flex flex-col gap-2">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-medium text-white">Quick Settings</h3>
-                                <button className="text-xs text-gray-400 hover:text-white">All settings</button>
-                            </div>
-                            
-                            <div className='flex w-full justify-center items-center gap-3'>
-                                {volume === 0 ? (
-                                    <VolumeX size={24} />
-                                ) : volume < 50 ? (
-                                    <Volume1 size={24} />
-                                ) : (
-                                    <Volume2 size={24} />
-                                )}
-                                <div className="relative w-full">
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value={volume}
-                                        onChange={(e) => setVolume(parseInt(e.target.value))}
-                                        className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                                    />
-                                    <style jsx>{`
-                                        .slider::-webkit-slider-thumb {
-                                            appearance: none;
-                                            width: 16px;
-                                            height: 16px;
-                                            border-radius: 50%;
-                                            background: #ffffff;
-                                            cursor: pointer;
-                                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                                        }
-                                        
-                                        .slider::-moz-range-thumb {
-                                            width: 16px;
-                                            height: 16px;
-                                            border-radius: 50%;
-                                            background: #ffffff;
-                                            cursor: pointer;
-                                            border: none;
-                                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                                        }
-                                        
-                                        .slider::-webkit-slider-track {
-                                            background: linear-gradient(to right, #3b82f6 0%, #3b82f6 ${volume}%, #4b5563 ${volume}%, #4b5563 100%);
-                                            height: 8px;
-                                            border-radius: 4px;
-                                        }
-                                        
-                                        .slider::-moz-range-track {
-                                            background: linear-gradient(to right, #3b82f6 0%, #3b82f6 ${volume}%, #4b5563 ${volume}%, #4b5563 100%);
-                                            height: 8px;
-                                            border-radius: 4px;
-                                            border: none;
-                                        }
-                                    `}</style>
-                                </div>
-                            </div>
-
-                            <div className='flex w-full justify-center items-center gap-3'>
-                                {brightness < 33 ? (
-                                    <SunDim size={24} />
-                                ) : brightness < 66 ? (
-                                    <SunMedium size={24} />
-                                ) : (
-                                    <Sun size={24} />
-                                )}
-                                <div className="relative w-full">
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value={brightness}
-                                        onChange={(e) => setBrightness(parseInt(e.target.value))}
-                                        className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                                    />
-                                    <style jsx>{`
-                                        .slider::-webkit-slider-thumb {
-                                            appearance: none;
-                                            width: 16px;
-                                            height: 16px;
-                                            border-radius: 50%;
-                                            background: #ffffff;
-                                            cursor: pointer;
-                                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                                        }
-                                        
-                                        .slider::-moz-range-thumb {
-                                            width: 16px;
-                                            height: 16px;
-                                            border-radius: 50%;
-                                            background: #ffffff;
-                                            cursor: pointer;
-                                            border: none;
-                                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                                        }
-                                        
-                                        .slider::-webkit-slider-track {
-                                            background: linear-gradient(to right, #3b82f6 0%, #3b82f6 ${volume}%, #4b5563 ${volume}%, #4b5563 100%);
-                                            height: 8px;
-                                            border-radius: 4px;
-                                        }
-                                        
-                                        .slider::-moz-range-track {
-                                            background: linear-gradient(to right, #3b82f6 0%, #3b82f6 ${volume}%, #4b5563 ${volume}%, #4b5563 100%);
-                                            height: 8px;
-                                            border-radius: 4px;
-                                            border: none;
-                                        }
-                                    `}</style>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-medium text-white">Active applications</h3>
-                                <button className="text-xs text-gray-400 hover:text-white" onClick={closeAll}>
-                                    Close all
-                                </button>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-3">
-                                {openApps.map(app => {
-                                    return(
-                                        <div className="bg-white/5 rounded-lg px-3 py-2 gap-3 flex flex-row justify-between items-center
-                                        hover:bg-white/10 transition-colors duration-200" key={app.id}>
-                                            <div className="flex items-center space-x-3">
-                                                {app.name === 'FlappyBird' ?
-                                                <img src={red} width="22" height="22" className="drop-shadow-lg"/>
-                                                : app.name === 'ChessBird' ?
-                                                <img src={chess} width="22" height="22" className="drop-shadow-lg"/>
-                                                : app.name === 'CfrApp' ?
-                                                <img src={cfr} width="22" height="22" className="drop-shadow-lg"/>
-                                                : app.name === 'MeowFeeder' ?
-                                                <div className="w-8 h-8 rounded-lg bg-pink-300 flex items-center justify-center">
-                                                    <span className="text-white font-bold text-sm p-0">MF</span>
-                                                </div>
-                                                : app.name === 'GeoExplorer' ?
-                                                <div className="h-22 w-22 bg-white rounded-xl flex items-center justify-center shadow-lg border border-[#5F5FDF]">
-                                                    <Globe2 className="text-xl text-[#5F5FDF]" />
-                                                </div>
-                                                : app.name === 'MyVendingMachine' ? 
-                                                <img src={vending} width="22" height="22"/>
-                                                : app.name === 'Google' ?
-                                                <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                                                </svg>
-                                                : app.name === 'Terminal' ?
-                                                <div className='flex items-center p-1.5 rounded-lg w-fit cursor-pointer 
-                                                ring-1 transition-all duration-200 ring-slate-400'>
-                                                    <Terminal size={10} color="white"/>
-                                                </div>
-                                                : null
-                                                }
-                                                <div className="flex">
-                                                    <div className="text-sm font-medium text-white">{app.name}</div>
-                                                </div>
-                                            </div>
-                                            <div className="group" onClick={() => closeApp(app.id)}>
-                                                <div className="p-2 rounded-lg transition-all duration-200 ease-out
-                                                hover:bg-gradient-to-br hover:from-red-500/25 hover:to-red-600/30 
-                                                hover:shadow-lg hover:shadow-red-500/20 hover:scale-105
-                                                border border-transparent hover:border-red-400/40 cursor-pointer
-                                                flex items-center justify-center min-w-[32px] min-h-[32px]
-                                                active:scale-95 active:bg-red-600/40">
-                                                    <X size={16} className="text-gray-400 group-hover:text-red-200 group-active:text-white 
-                                                    transition-all duration-200 drop-shadow-sm"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                                {openApps.length === 0 && (
-                                    <div className="text-sm text-gray-400">
-                                        No open applications
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <QuickSettings 
+                        volume={volume} 
+                        setVolume={setVolume} 
+                        brightness={brightness} 
+                        setBrightness={setBrightness} 
+                        openApps={openApps} 
+                        setOpenApps={setOpenApps} 
+                    />
                 )}
             </div>
         </div>

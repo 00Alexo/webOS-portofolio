@@ -14,263 +14,98 @@ import vending from '../assets/vending.png';
 
 const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedAppId}) => {
     const handleAppClick = (appId) => {
-        console.log('test');
         bringToFront(appId);
     };
 
-    console.log(openApps);
-
-    const openTerminal = () => {
-        if(!openApps.some(app => app.name === 'Terminal')) {
+    const openApp = (appName) =>{
+        if(!openApps.some(app => app.name === appName)){
             const newAppId = Date.now();
+
             const newApp = {
                 id: newAppId,
-                name: 'Terminal',
-                component: null, 
-                isMinimized: false,
-                isMaxSize: false
-            }
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'Terminal' && app.isMinimized)) {
-            const terminalApp = openApps.find(app => app.name === 'Terminal');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'Terminal' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(terminalApp.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'Terminal' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
-        }
-    };
-
-    const openFlappyBird = () => {
-        if(!openApps.some(app => app.name === 'FlappyBird')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'FlappyBird',
+                name: appName,
                 component: null, 
                 isMinimized: false,
                 isMaxSize: true,
                 isLoading: true
             }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000)
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'FlappyBird' && app.isMinimized)) {
-            const flappyBirdApp = openApps.find(app => app.name === 'FlappyBird');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'FlappyBird' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(flappyBirdApp.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'FlappyBird' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
-        }
-    };
 
-    const openChessBird = () => {
-        if(!openApps.some(app => app.name === 'ChessBird')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'ChessBird',
-                component: null, 
-                isMinimized: false,
-                isMaxSize: true,
-                isLoading: true
+            if(appName === "Terminal" || appName === "Google")
+                newApp.isMaxSize = false;
+
+            if(appName === "Terminal") {
+                newApp.isLoading = false;
             }
+
             setTimeout(() =>{
                 setOpenApps(prev => prev.map(app => 
                     app.id === newAppId ? { ...app, isLoading: false } : app
                 ));
             }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'ChessBird' && app.isMinimized)) {
-            const ChessBirdApp = openApps.find(app => app.name === 'ChessBird');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'ChessBird' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(ChessBirdApp.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'ChessBird' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
-        }
-    };
 
-    const openCfr = () => {
-        if(!openApps.some(app => app.name === 'CfrApp')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'CfrApp',
-                component: null, 
-                isMinimized: false,
-                isMaxSize: true,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
             setOpenApps([...openApps, newApp]);
             bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'CfrApp' && app.isMinimized)) {
-            const CfrApp = openApps.find(app => app.name === 'CfrApp');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'CfrApp' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(CfrApp.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'CfrApp' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
-        }
-    };
+        }else if(openApps.some(app => app.name === appName && app.isMinimized)){
+            const minApp = openApps.find(app => app.name === appName);
 
-    const openMeowFeeder = () => {
-        if(!openApps.some(app => app.name === 'MeowFeeder')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'MeowFeeder',
-                component: null, 
-                isMinimized: false,
-                isMaxSize: true,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'MeowFeeder' && app.isMinimized)) {
-            const MeowFeeder = openApps.find(app => app.name === 'MeowFeeder');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'MeowFeeder' ? { ...app, isMinimized: false } : app
+            setOpenApps(prev => prev.map(app =>
+                app.name === appName ? { ...app, isMinimized: false } : app
             ));
-            bringToFront(MeowFeeder.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'MeowFeeder' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
-        }
-    };
 
-    const openGeoExplorer = () => {
-        if(!openApps.some(app => app.name === 'GeoExplorer')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'GeoExplorer',
-                component: null, 
-                isMinimized: false,
-                isMaxSize: true,
-                isLoading: true
-            }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
+            bringToFront(minApp.id);
+        }else{
+            const bringApp = openApps.find(app => app.name === appName);
+            
+            if(focusedAppId === bringApp.id){
+                setOpenApps(prev => prev.map(app =>
+                    app.name === appName ? {...app, isMinimized: true} : app
                 ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'GeoExplorer' && app.isMinimized)) {
-            const GeoExplorer = openApps.find(app => app.name === 'GeoExplorer');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'GeoExplorer' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(GeoExplorer.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'GeoExplorer' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
-        }
-    };
-
-    const openMyVendingMachine = () => {
-        if(!openApps.some(app => app.name === 'MyVendingMachine')) {
-            const newAppId = Date.now();
-            const newApp = {
-                id: newAppId,
-                name: 'MyVendingMachine',
-                component: null, 
-                isMinimized: false,
-                isMaxSize: true,
-                isLoading: true
+            } else {
+                bringToFront(bringApp.id);
             }
-            setTimeout(() =>{
-                setOpenApps(prev => prev.map(app => 
-                    app.id === newAppId ? { ...app, isLoading: false } : app
-                ));
-            }, 3000);
-            setOpenApps([...openApps, newApp]);
-            bringToFront(newAppId);
-        } else if(openApps.some(app => app.name === 'MyVendingMachine' && app.isMinimized)) {
-            const MyVendingMachine = openApps.find(app => app.name === 'MyVendingMachine');
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'MyVendingMachine' ? { ...app, isMinimized: false } : app
-            ));
-            bringToFront(MyVendingMachine.id);
-        } else {
-            setOpenApps(prev => prev.map(app => 
-                app.name === 'MyVendingMachine' ? {...app, isMinimized: !app.isMinimized} : app
-            ));
         }
-    };
+    }
     
     return (
         <div>
             <div className="p-3 flex gap-4 flex-wrap">
                 <div className="flex items-center p-3 rounded-lg bg-zinc-800 w-fit cursor-pointer
                 ring-1 ring-white/40 hover:bg-white/10 transition-all duration-200"
-                onClick={openTerminal}>
+                onClick={() => openApp('Terminal')}>
                     <Terminal size={28} color="white"/>
                 </div>
 
                 <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
-                onClick={openFlappyBird}>
+                onClick={() => openApp('FlappyBird')}>
                     <img src={red} width="28" height="28" className="scale-150"/>
                 </div>
 
                 <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
-                onClick={openChessBird}>
+                onClick={() => openApp('ChessBird')}>
                     <img src={chess} width="28" height="28" className="scale-150"/>
                 </div>
 
                 <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
-                onClick={openCfr}>
+                onClick={() => openApp('CfrApp')}>
                     <img src={cfr} width="22" height="22" className="scale-150"/>
                 </div>
 
                 <div className="flex items-center py-1 px-2 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
-                onClick={openMeowFeeder}>
+                onClick={() => openApp('MeowFeeder')}>
                     <div className="w-10 h-10 rounded-lg bg-pink-300 flex items-center justify-center">
                         <span className="text-white font-bold text-sm p-0">MF</span>
                     </div>
                 </div>
 
                 <div className="flex items-center py-1 px-2 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
-                onClick={openGeoExplorer}>
+                onClick={() => openApp('GeoExplorer')}>
                     <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-lg border border-[#5F5FDF] scale-110">
                         <Globe2 className="text-xl text-[#5F5FDF]" />
                     </div>
                 </div>
 
                 <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
-                onClick={openMyVendingMachine}>
+                onClick={() => openApp('MyVendingMachine')}>
                     <img src={vending} width="28" height="28" className="scale-150"/>
                 </div>
             </div>
