@@ -7,7 +7,7 @@ import vending from '../assets/vending.png';
 import QuickSettings from './QuickSettings';
 import WinBar from './WinBar';
 
-const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volume, setVolume, brightness, setBrightness }) => {
+const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volume, setVolume, brightness, setBrightness, user, setUser }) => {
     const [time, setTime] = useState(new Date());
     const [isArrowOpen, setIsArrowOpen] = useState(false);
     const [isWinBarOpen, setIsWinBarOpen] = useState(false);
@@ -137,7 +137,7 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volu
                 </div>
 
                 {isWinBarOpen && (
-                    <WinBar/>
+                    <WinBar user={user} setUser={setUser}/>
                 )}
             </div>
 

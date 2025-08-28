@@ -4,6 +4,7 @@ import Taskbar from './components/Taskbar';
 import rashy from './assets/rashy.jpg';
 import { useState, useEffect } from 'react';
 import Login from './pages/Login';
+import { AnimatePresence, motion } from 'framer-motion';
 function App() {
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
@@ -35,43 +36,64 @@ function App() {
 
   if(!user)
     return (
-      <Login setUser={setUser} user={user}/>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="login"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, y: -50 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Login setUser={setUser} user={user}/>
+        </motion.div>
+      </AnimatePresence>
     )
 
   return (
-    <BrowserRouter>
-      <div className="App w-screen h-screen bg-cover bg-center select-none overflow-hidden relative" style={{ backgroundImage: `url(${rashy})` }}>
-          <div 
-              className="absolute inset-0 bg-black transition-opacity duration-300 pointer-events-none z-[999999]"
-              style={{ opacity: Math.max(0, (100 - brightness) / 150) }}
-          />
-          <Taskbar 
-            openApps={openApps} 
-            setOpenApps={setOpenApps} 
-            apps={apps} 
-            bringToFront={bringToFront}
-            focusedAppId={focusedAppId}
-            volume={volume}
-            setVolume={setVolume}
-            brightness={brightness}
-            setBrightness={setBrightness}
-          />
-          <Routes> 
-            <Route path = "/" element={
-              <Main 
-                apps={apps} 
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="main"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        <BrowserRouter>
+          <div className="App w-screen h-screen bg-cover bg-center select-none overflow-hidden relative" style={{ backgroundImage: `url(${rashy})` }}>
+              <div 
+                  className="absolute inset-0 bg-black transition-opacity duration-300 pointer-events-none z-[999999]"
+                  style={{ opacity: Math.max(0, (100 - brightness) / 150) }}
+              />
+              <Taskbar 
+                setUser={setUser} 
+                user={user}
                 openApps={openApps} 
-                setOpenApps={setOpenApps}
+                setOpenApps={setOpenApps} 
+                apps={apps} 
                 bringToFront={bringToFront}
-                getAppZIndex={getAppZIndex}
                 focusedAppId={focusedAppId}
                 volume={volume}
                 setVolume={setVolume}
+                brightness={brightness}
+                setBrightness={setBrightness}
               />
-            }/>
-          </Routes>
-      </div>
-    </BrowserRouter>
+              <Routes> 
+                <Route path = "/" element={
+                  <Main 
+                    apps={apps} 
+                    openApps={openApps} 
+                    setOpenApps={setOpenApps}
+                    bringToFront={bringToFront}
+                    getAppZIndex={getAppZIndex}
+                    focusedAppId={focusedAppId}
+                    volume={volume}
+                    setVolume={setVolume}
+                  />
+                }/>
+              </Routes>
+          </div>
+        </BrowserRouter>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 

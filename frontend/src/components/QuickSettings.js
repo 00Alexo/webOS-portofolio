@@ -15,7 +15,7 @@ const QuickSettings = ({volume, setVolume, brightness, setBrightness, openApps, 
 
     return (
         <div className="absolute bottom-full right-0 mb-2 mr-2 backdrop-blur-xl border notification-area
-        border-white/20 rounded-lg bg-gradient-to-br from-[#1e2936] to-[#0f1419]
+        rounded-lg bg-gradient-to-br bg-[#181818] border-white/15
         shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] p-4 min-w-[320px] max-h-[400px] z-50 overflow-hidden">
             <div className="absolute top-full right-8 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-gray-900/95"></div>
             
