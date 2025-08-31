@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {ChevronDown, ChevronUp, Terminal, Globe2} from 'lucide-react';
+import {ChevronDown, ChevronUp, Terminal, Globe2, BadgeHelp} from 'lucide-react';
 import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
 import cfr from '../assets/cfr.png';
@@ -7,10 +7,9 @@ import vending from '../assets/vending.png';
 import QuickSettings from './QuickSettings';
 import WinBar from './WinBar';
 
-const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volume, setVolume, brightness, setBrightness, user, setUser }) => {
+const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volume, setVolume, brightness, setBrightness, user, setUser, isWinBarOpen, setIsWinBarOpen }) => {
     const [time, setTime] = useState(new Date());
     const [isArrowOpen, setIsArrowOpen] = useState(false);
-    const [isWinBarOpen, setIsWinBarOpen] = useState(false);
 
     useEffect(() =>{
         const timer = setInterval(() => {
@@ -188,6 +187,14 @@ const Taskbar = ({ openApps, setOpenApps, apps, bringToFront, focusedAppId, volu
                                             }`}>
                                                 <Terminal size={12} color="white"/>
                                             </div>
+                                        ) : app.name === 'Help' ? (
+                                        <div className={`flex items-center justify-center w-8 h-8 rounded-lg cursor-pointer ring-1 transition-all duration-200 ${
+                                            isAppActive('Help') 
+                                                ? 'bg-gray-100 ring-white/60' 
+                                                : 'bg-white ring-white/40'
+                                        }`}>
+                                            <BadgeHelp size={20} color="black"/>
+                                        </div>
                                         ) : app.name === 'GeoExplorer' ? (
                                             <div className="w-8 h-8 flex items-center justify-center">
                                                 <div className="h-8 w-8 bg-white rounded-lg flex items-center justify-center shadow-lg border border-[#5F5FDF]">

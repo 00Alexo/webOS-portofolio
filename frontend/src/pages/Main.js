@@ -1,4 +1,4 @@
-import { Globe, Globe2, Terminal } from "lucide-react";
+import { BadgeHelp, Globe2, Terminal } from "lucide-react";
 import TerminalApp from "../components/Apps/TerminalApp";
 import GoogleApp from "../components/Apps/GoogleApp";
 import ChessBirdApp from "../components/Apps/ChessBirdApp";
@@ -11,6 +11,7 @@ import red from '../assets/Red.png';
 import chess from '../assets/chess.png';
 import cfr from '../assets/cfr.png';
 import vending from '../assets/vending.png';
+import HelpApp from "../components/Apps/HelpApp";
 
 const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedAppId}) => {
     const handleAppClick = (appId) => {
@@ -30,10 +31,10 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                 isLoading: true
             }
 
-            if(appName === "Terminal" || appName === "Google")
+            if(appName === "Terminal" || appName === "Google" || appName === "Help")
                 newApp.isMaxSize = false;
 
-            if(appName === "Terminal") {
+            if(appName === "Terminal" || appName === "Help") {
                 newApp.isLoading = false;
             }
 
@@ -68,11 +69,16 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
     
     return (
         <div>
-            <div className="p-3 flex gap-4 flex-wrap">
+            <div className="grid grid-cols-3 w-fit gap-5 p-3">
                 <div className="flex items-center p-3 rounded-lg bg-zinc-800 w-fit cursor-pointer
                 ring-1 ring-white/40 hover:bg-white/10 transition-all duration-200"
                 onClick={() => openApp('Terminal')}>
                     <Terminal size={28} color="white"/>
+                </div>
+
+                <div className="flex items-center p-2.5 rounded-lg w-fit bg-white border-2 border-black cursor-pointer
+                hover:bg-gray-400 hover:border-gray-800 transition-all duration-200"  onClick={() => openApp('Help')}>
+                    <BadgeHelp size={28} color="black"/>
                 </div>
 
                 <div className="flex items-center p-3 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
@@ -128,6 +134,8 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                         updatedComponent = <GeoExplorerApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
                     } else if (app.name === "MyVendingMachine"){
                         updatedComponent = <MyVendingMachineApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
+                    } else if (app.name === "Help"){
+                        updatedComponent = <HelpApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
                     }
                     
                     return (

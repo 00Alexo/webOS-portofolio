@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Main from './pages/Main';
 import Taskbar from './components/Taskbar';
 import rashy from './assets/rashy.jpg';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Login from './pages/Login';
 import { AnimatePresence, motion } from 'framer-motion';
 function App() {
@@ -33,6 +33,31 @@ function App() {
   };
 
   const [user, setUser] = useState(false);
+
+  const [lastKey, setLastKey] = useState(null);
+  const lastKeyRef = useRef(null);
+  const [isWinBarOpen, setIsWinBarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      console.log(e.key);
+
+      if((e.key === 'w' && lastKeyRef.current === "Shift") || (e.key === 'W' && lastKeyRef.current === "Shift")) {
+        e.preventDefault();
+        setIsWinBarOpen(prev => !prev);
+      }
+      
+      setLastKey(e.key);
+      lastKeyRef.current = e.key;
+    };
+
+    if(user)
+      document.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [user]);
 
   if(!user)
     return (
@@ -75,6 +100,8 @@ function App() {
                 setVolume={setVolume}
                 brightness={brightness}
                 setBrightness={setBrightness}
+                isWinBarOpen={isWinBarOpen}
+                setIsWinBarOpen={setIsWinBarOpen}
               />
               <Routes> 
                 <Route path = "/" element={
