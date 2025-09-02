@@ -8,11 +8,19 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const draggableRef = useRef(null);
 
-    const [input, setInput] = useState('');
-    const [history, setHistory] = useState([
-        { type: 'output', content: 'Welcome to the terminal! v1.0.0' },
-        { type: 'output', content: 'Type "help" for a list of available commands.' }
+    const [screens, setScreens] = useState([
+        { 
+            name: "PowerShell", 
+            id: 1, 
+            history: [
+                { type: 'output', content: 'Welcome to the terminal! v1.0.0' },
+                { type: 'output', content: 'Type "help" for a list of available commands.' }
+            ]
+        }
     ]);
+    const [activeScreen, setActiveScreen] = useState(screens[0]);
+
+    const [input, setInput] = useState('');
 
     const terminalRef = useRef(null);
     const inputRef = useRef(null);
@@ -24,7 +32,7 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
         if (terminalRef.current) {
             terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
         }
-    }, [history]);
+    }, [activeScreen, screens]);
 
     useEffect(() => {
         if (inputRef.current) {
@@ -53,30 +61,30 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
         if(!command)
             return;
 
-        setHistory(prev => [...prev, { type: 'command', content: `user@webos: ${command}` }]);
+        const updatedScreen = { ...activeScreen, history: [...activeScreen.history, { type: 'command', content: `user@webos: ${command}` }] };
+        setActiveScreen(updatedScreen);
+        setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? updatedScreen : screen));
 
         switch (command) {
             case 'help':
-                setHistory(prev => [...prev, { 
-                    type: 'output', 
-                    content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user' 
-                }]);
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'output', content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user' }] } : screen));
+                setActiveScreen(previous => ({ ...previous, history: [...previous.history, { type: 'output', content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user' }] }));
                 break;
             
             case 'clear':
-                setHistory([]);
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [] } : screen));
+                setActiveScreen({ ...activeScreen, history: [] });
                 break;
 
             case 'whoami':
-                setHistory(prev => [...prev, { type: 'output', content: 'user@User' }]);
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'output', content: 'user' }] } : screen));
+                setActiveScreen({ ...activeScreen, history: [...activeScreen.history, { type: 'output', content: 'user' }] });
                 break;
 
             default:
-            setHistory(prev => [...prev, { 
-                type: 'error', 
-                content: `Command not found: ${command}` 
-            }]);
-            break;
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'error', content: `Command not found: ${command}` }] } : screen));
+                setActiveScreen({ ...activeScreen, history: [...activeScreen.history, { type: 'error', content: `Command not found: ${command}` }] });
+                break;
         }
     }
 
@@ -133,18 +141,47 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                 <div className={`bg-gray-800/50 border-b border-white/10 flex-shrink-0 ${isMaxSize ? '' : 'drag-handle cursor-move'}`}>
                     <div className="flex justify-between px-2 pt-2">
                         <div className="flex items-end space-x-1">
-                            <div className="flex items-center text-xs bg-gray-700/50 
-                            px-3 py-1.5 rounded-t-lg border-t border-l border-r border-white/10 min-w-[100px] opacity-70 hover:opacity-100 cursor-pointer transition-all duration-200">
-                                <ChevronRight size={14} className="mr-1.5"/>
-                                <span className="flex-1">PowerShell</span>
-                                <button className="ml-2 hover:bg-white/10 rounded p-0.5 transition-all duration-200">
-                                    <X size={12} />
+                            {screens.map((screen) =>{ return (
+                                <div key={screen.id} className={`flex items-center text-xs bg-gray-700/50 duration-200
+                                    ${activeScreen.id === screen.id ? 'opacity-100' : 'opacity-50 hover:opacity-100'} cursor-pointer 
+                                    px-3 py-1.5 rounded-t-lg border-t border-l border-r border-white/10 min-w-[100px] transition-all`}
+                                onClick={() => setActiveScreen(screen)}>
+                                    <ChevronRight size={14} className="mr-1.5"/>
+                                    <span className="flex-1">{screen.name}</span>
+                                    <button className="ml-2 hover:bg-white/10 rounded p-0.5 transition-all duration-200" 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setScreens(prev => prev.filter(s => s.id !== screen.id));
+                                        if(screens.length > 0 && activeScreen.id === screen.id)
+                                            setActiveScreen(screens[0]);
+                                        if(screens.length === 0)
+                                            setActiveScreen(null);
+                                    }}>
+                                        <X size={12}/>
+                                    </button>
+                                </div>
+                            )})}
+                            {screens.length < 4 &&
+                                <button className="flex items-center justify-center w-8 h-8 rounded-t-lg 
+                                hover:bg-white/10 transition-all duration-200 text-gray-400 hover:text-white" 
+                                onClick={() => {
+                                    const newId = screens.length > 0 ? screens[screens.length - 1].id + 1 : 1;
+                                    if(screens.length < 4){
+                                        const newScreen = {
+                                            name: `Screen ${newId}`, 
+                                            id: newId, 
+                                            history: [
+                                            { type: 'output', content: 'Welcome to the terminal! v1.0.0' },
+                                            { type: 'output', content: 'Type "help" for a list of available commands.' }
+                                            ] 
+                                        }
+                                        setScreens(prev => [...prev, newScreen]);
+                                        setActiveScreen(newScreen);
+                                    }
+                                }}>
+                                    <Plus size={14}/>
                                 </button>
-                            </div>
-                            <button className="flex items-center justify-center w-8 h-8 rounded-t-lg 
-                            hover:bg-white/10 transition-all duration-200 text-gray-400 hover:text-white">
-                                <Plus size={14} />
-                            </button>
+                            }
                         </div>
                         <div className="flex space-x-2 items-center pb-1">
                             <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
@@ -181,7 +218,7 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                     [&::-webkit-scrollbar-thumb]:rounded-full
                     [&::-webkit-scrollbar-thumb:hover]:bg-gray-800/80"
                 >
-                    {history.map((entry, index) => (
+                    {activeScreen.history.map((entry, index) => (
                         <div key={index} className="whitespace-pre-wrap">
                             {entry.type === 'command' && (
                                 <span className="text-white">{entry.content}</span>
