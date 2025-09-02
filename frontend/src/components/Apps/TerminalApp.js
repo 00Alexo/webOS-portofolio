@@ -2,8 +2,11 @@ import { ChevronRight, X, Minus, Square, Plus } from "lucide-react";
 import {useState, useEffect, useRef} from 'react';
 import Draggable from 'react-draggable';
 import useWindowSize from '../../hooks/useWindowSize';
+import { fileSystem, FileSystemManager } from '../../utils/fileSystem';
 
 const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
+    const [managers, setManagers] = useState({});
+
     const windowSize = useWindowSize();
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const draggableRef = useRef(null);
@@ -27,6 +30,27 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     
     const currentApp = openApps.find(app => app.id === appId);
     const isMaxSize = currentApp?.isMaxSize || false;
+    
+    const getManagerForScreen = (screenId) => {
+        if (!managers[screenId]) {
+            const newManager = new FileSystemManager(fileSystem);
+            setManagers(prev => ({
+                ...prev,
+                [screenId]: newManager
+            }));
+            return newManager;
+        }
+        return managers[screenId];
+    };
+
+    useEffect(() => {
+        if (screens.length > 0 && !managers[screens[0].id]) {
+            setManagers(prev => ({
+                ...prev,
+                [screens[0].id]: new FileSystemManager(fileSystem)
+            }));
+        }
+    }, []);
     
     useEffect(() => {
         if (terminalRef.current) {
@@ -57,18 +81,29 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
     };
 
     const executeCommand = (commandLine) =>{
-        const command = commandLine.trim().toLowerCase();
+        const currentManager = getManagerForScreen(activeScreen.id);
+        
+        let command = commandLine.trim().toLowerCase();
+        let orgcommand = command;
+        let dirName = '';
+
         if(!command)
             return;
 
-        const updatedScreen = { ...activeScreen, history: [...activeScreen.history, { type: 'command', content: `user@webos: ${command}` }] };
+        if(command.startsWith('cd')){
+            const parts = command.split(' ');
+            command = parts[0];
+            dirName = parts[1];
+        }
+
+        const updatedScreen = { ...activeScreen, history: [...activeScreen.history, { type: 'command', content: `user@webos: ${orgcommand}` }] };
         setActiveScreen(updatedScreen);
         setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? updatedScreen : screen));
 
         switch (command) {
             case 'help':
-                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'output', content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user' }] } : screen));
-                setActiveScreen(previous => ({ ...previous, history: [...previous.history, { type: 'output', content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user' }] }));
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'output', content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user\n  ls - List directory contents\n  cd - Change directory\n  cb - Go back one directory\n  pwd - Show current directory' }] } : screen));
+                setActiveScreen(previous => ({ ...previous, history: [...previous.history, { type: 'output', content: 'Available commands:\n  help - Show this help message\n  clear - Clear terminal\n  whoami - Show current user\n  ls - List directory contents\n  cd - Change directory\n  cb - Go back one directory\n  pwd - Show current directory' }] }));
                 break;
             
             case 'clear':
@@ -78,9 +113,54 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
 
             case 'whoami':
                 setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'output', content: 'user' }] } : screen));
-                setActiveScreen({ ...activeScreen, history: [...activeScreen.history, { type: 'output', content: 'user' }] });
+                setActiveScreen(prev => ({...prev, history: [...prev.history, { type: 'output', content: 'user' }] }));
                 break;
 
+            case 'ls':
+                const lsOutput = currentManager.ls();
+
+                const formattedOutput = lsOutput.length > 0 
+                    ? lsOutput.map(item => `${item.type === 'directory' ? 'D:' : ''} ${item.name} ${item.extension ? item.extension : ''}`)
+                    : 'Directory is empty';
+
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? {...screen, history: [...screen.history, { type: 'output', content: formattedOutput }] } : screen));
+                setActiveScreen(prev => ({ ...prev, history: [...prev.history, { type: 'output', content: formattedOutput }] }));
+                break;
+
+            case 'cd':
+                const cdOutput = currentManager.cd(dirName);
+
+                if(cdOutput.error){
+                    setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'error', content: cdOutput.error }] } : screen));
+                    setActiveScreen(prev => ({...prev, history: [...prev.history, { type: 'error', content: cdOutput.error }] }));
+                }
+                break;
+
+            case 'cb':
+                const cbOutput = currentManager.cb();
+
+                if(cbOutput && cbOutput.newPath){
+                    setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? {...screen, history: [...screen.history, { type: 'output', content: `Moved back to: ${cbOutput.newPath}` }] } : screen));
+                    setActiveScreen(prev => ({...prev, history: [...prev.history, { type: 'output', content: `Moved back to: ${cbOutput.newPath}` }] }));
+                } else if(cbOutput && cbOutput.error) {
+                    setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? {...screen, history: [...screen.history, { type: 'error', content: cbOutput.error }] } : screen));
+                    setActiveScreen(prev => ({...prev, history: [...prev.history, { type: 'error', content: cbOutput.error }] }));
+                } else {
+                    setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? {...screen, history: [...screen.history, { type: 'error', content: `Already at root directory` }] } : screen));
+                    setActiveScreen(prev => ({...prev, history: [...prev.history, { type: 'error', content: `Already at root directory` }] }));
+                }
+                break;
+
+            case 'pwd':
+                const pwdOutput = currentManager.getCurrentPath();
+                const pwdarr = pwdOutput.split('/');
+                const outputdir = pwdarr.at(-1);
+
+                setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? {...screen, history: [...screen.history, {type: 'output', content: outputdir}]} : screen))
+                setActiveScreen(prev => ({...prev, history: [...prev.history, {type: 'output', content: outputdir}]}))
+
+                break;
+            
             default:
                 setScreens(prev => prev.map(screen => screen.id === activeScreen.id ? { ...screen, history: [...screen.history, { type: 'error', content: `Command not found: ${command}` }] } : screen));
                 setActiveScreen({ ...activeScreen, history: [...activeScreen.history, { type: 'error', content: `Command not found: ${command}` }] });
@@ -177,6 +257,10 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                                         }
                                         setScreens(prev => [...prev, newScreen]);
                                         setActiveScreen(newScreen);
+                                        setManagers(prev => ({
+                                            ...prev,
+                                            [newId]: new FileSystemManager(fileSystem)
+                                        }));
                                     }
                                 }}>
                                     <Plus size={14}/>
@@ -218,7 +302,7 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                     [&::-webkit-scrollbar-thumb]:rounded-full
                     [&::-webkit-scrollbar-thumb:hover]:bg-gray-800/80"
                 >
-                    {activeScreen.history.map((entry, index) => (
+                    {screens.length > 0 && activeScreen.history.map((entry, index) => (
                         <div key={index} className="whitespace-pre-wrap">
                             {entry.type === 'command' && (
                                 <span className="text-white">{entry.content}</span>
@@ -232,19 +316,21 @@ const TerminalApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                         </div>
                     ))}
 
-                    <div className="flex items-center">
-                        <span className="text-white mr-2">user@webos:~$</span>
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={handleKeyPress}
-                            className="flex-1 bg-transparent text-green-400 outline-none font-mono"
-                            autoComplete="off"
-                            spellCheck="false"
-                        />
-                    </div>
+                    {screens.length > 0 && (
+                        <div className="flex items-center">
+                            <span className="text-white mr-2">user@webos{getManagerForScreen(activeScreen.id)?.getCurrentPath()}:-$</span>
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                className="flex-1 bg-transparent text-green-400 outline-none font-mono"
+                                autoComplete="off"
+                                spellCheck="false"
+                            />
+                        </div> 
+                    )}
                 </div>
             </div>
         </Draggable>

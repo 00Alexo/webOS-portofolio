@@ -40,8 +40,6 @@ function App() {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
-      console.log(e.key);
-
       if((e.key === 'w' && lastKeyRef.current === "Shift") || (e.key === 'W' && lastKeyRef.current === "Shift")) {
         e.preventDefault();
         setIsWinBarOpen(prev => !prev);

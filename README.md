@@ -13,7 +13,6 @@ webOS Portfolio is an innovative personal portfolio project that recreates the c
 ## ✨ Features
 
 ### 🎨 **Modern UI/UX**
-- **Responsive Layout**: Optimized for both desktop and mobile devices
 - **Smooth Animations**: Powered by Framer Motion for fluid transitions
 - **Dark Theme**: Consistent dark aesthetic with customizable brightness, SOON GONNA BE LIGHT/DARK/CUSTOMISABLE
 
