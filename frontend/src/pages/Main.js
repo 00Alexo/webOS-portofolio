@@ -13,6 +13,7 @@ import cfr from '../assets/cfr.png';
 import vending from '../assets/vending.png';
 import HelpApp from "../components/Apps/HelpApp";
 import FileExplorerApp from "../components/Apps/FileExplorerApp";
+import CalculatorApp from "../components/Apps/CalculatorApp";
 
 const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedAppId}) => {
     const handleAppClick = (appId) => {
@@ -32,10 +33,10 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                 isLoading: true
             }
 
-            if(appName === "Terminal" || appName === "Google" || appName === "Help" || appName === "FileExplorer")
+            if(appName === "Terminal" || appName === "Google" || appName === "Help" || appName === "FileExplorer" || appName === "Calculator")
                 newApp.isMaxSize = false;
 
-            if(appName === "Terminal" || appName === "Help" || appName === "FileExplorer") {
+            if(appName === "Terminal" || appName === "Help" || appName === "FileExplorer" || appName === "Calculator") {
                 newApp.isLoading = false;
             }
 
@@ -226,6 +227,13 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                 onClick={() => openApp('MyVendingMachine')}>
                     <img src={vending} width="28" height="28" className="scale-150"/>
                 </div>
+
+                <div className="flex items-center p-0.5 rounded-lg w-fit cursor-pointer hover:bg-white/10 transition-all duration-200"
+                onClick={() => openApp('Calculator')}>
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+                        <path fill="#cfd8dc" d="M42,37c0,2.762-2.238,5-5,5H11c-2.762,0-5-2.238-5-5V11c0-2.762,2.238-5,5-5h26c2.762,0,5,2.238,5,5	V37z"></path><path fill="#1f212b" d="M32,38H16c-1.105,0-2-0.895-2-2V12c0-1.105,0.895-2,2-2h16c1.105,0,2,0.895,2,2v24	C34,37.105,33.105,38,32,38z"></path><path fill="#757575" d="M30,18H18c-0.552,0-1-0.448-1-1v-4c0-0.552,0.448-1,1-1h12c0.552,0,1,0.448,1,1v4	C31,17.552,30.552,18,30,18z"></path><circle cx="18" cy="22" r="2" fill="#e0e0e0"></circle><circle cx="24" cy="22" r="2" fill="#e0e0e0"></circle><circle cx="30" cy="22" r="2" fill="#ffab40"></circle><circle cx="18" cy="28" r="2" fill="#e0e0e0"></circle><circle cx="24" cy="28" r="2" fill="#e0e0e0"></circle><circle cx="30" cy="28" r="2" fill="#ffab40"></circle><circle cx="30" cy="34" r="2" fill="#ffab40"></circle><path fill="#e0e0e0" d="M24,36h-6c-1.105,0-2-0.895-2-2v0c0-1.105,0.895-2,2-2h6c1.105,0,2,0.895,2,2v0	C26,35.105,25.105,36,24,36z"></path>
+                    </svg>
+                </div>
             </div>
             <div>
                 {openApps.map(app => {
@@ -250,6 +258,8 @@ const Main = ({apps, openApps, setOpenApps, bringToFront, getAppZIndex, focusedA
                         updatedComponent = <HelpApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
                     } else if (app.name === "FileExplorer"){
                         updatedComponent = <FileExplorerApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
+                    } else if (app.name === "Calculator"){
+                        updatedComponent = <CalculatorApp setOpenApps={setOpenApps} bringToFront={bringToFront} appId={app.id} openApps={openApps} focusedAppId={focusedAppId} />;
                     }
                     
                     return (
