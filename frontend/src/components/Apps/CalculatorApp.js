@@ -270,7 +270,7 @@ const CalculatorApp = ({setOpenApps, bringToFront, appId, openApps}) => {
             <div className={`bg-[#101010] border-white/15 backdrop-blur-xl border rounded-xl bg-gradient-to-br
             shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] text-white w-[300px]`} 
             onClick={handleCalculatorClick}>
-                <div className="absolute right-2 flex flex-col top-5 gap-2">
+                <div className="absolute right-2.5 flex flex-col top-5 gap-2">
                     <button className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 
                         shadow-inner border border-green-600 transition-all duration-150 hover:scale-110"
                         onClick={(e) => {
