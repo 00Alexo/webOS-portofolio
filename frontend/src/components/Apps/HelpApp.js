@@ -108,13 +108,21 @@ const HelpApp = ({setOpenApps, bringToFront, appId, openApps}) => {
                                 Keyboard Shortcuts
                             </h2>
                         </div>
-                        <div className="flex justify-between items-center border-b border-gray-400/30 py-2">
-                            <div className="bg-slate-400 p-3 rounded-lg flex flex-row justify-between w-[40%]">
+                        <div className="flex justify-between items-center border-b border-gray-400/30 py-2 mt-2">
+                            <div className="bg-slate-400 p-3 rounded-lg flex flex-row justify-between w-[45%]">
                                 <p> Open WinBar</p>
                                 <div className="flex gap-1">
                                     <kbd className="px-2 py-1 bg-gray-700/50 rounded text-xs border border-gray-600">Shift</kbd>
                                         <span className="text-gray-700">+</span>
                                     <kbd className="px-2 py-1 bg-gray-700/50 rounded text-xs border border-gray-600">W</kbd>
+                                </div>
+                            </div>
+                            <div className="bg-slate-400 p-3 rounded-lg flex flex-row justify-between w-[45%]">
+                                <p> Open Settings</p>
+                                <div className="flex gap-1">
+                                    <kbd className="px-2 py-1 bg-gray-700/50 rounded text-xs border border-gray-600">Shift</kbd>
+                                        <span className="text-gray-700">+</span>
+                                    <kbd className="px-2 py-1 bg-gray-700/50 rounded text-xs border border-gray-600">S</kbd>
                                 </div>
                             </div>
                         </div>

@@ -5,6 +5,7 @@ import rashy from './assets/rashy.jpg';
 import { useState, useEffect, useRef } from 'react';
 import Login from './pages/Login';
 import { AnimatePresence, motion } from 'framer-motion';
+import Settings from './components/Settings';
 function App() {
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
@@ -37,12 +38,18 @@ function App() {
   const [lastKey, setLastKey] = useState(null);
   const lastKeyRef = useRef(null);
   const [isWinBarOpen, setIsWinBarOpen] = useState(false);
+  const [areSettingsOpen, setAreSettingsOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
       if((e.key === 'w' && lastKeyRef.current === "Shift") || (e.key === 'W' && lastKeyRef.current === "Shift")) {
         e.preventDefault();
         setIsWinBarOpen(prev => !prev);
+      }
+
+      if((e.key === 's' && lastKeyRef.current === "Shift") || (e.key === 'S' && lastKeyRef.current === "Shift")){
+        e.preventDefault();
+        setAreSettingsOpen(prev => !prev);
       }
       
       setLastKey(e.key);
@@ -101,6 +108,15 @@ function App() {
                 isWinBarOpen={isWinBarOpen}
                 setIsWinBarOpen={setIsWinBarOpen}
               />
+              {areSettingsOpen && 
+                <Settings 
+                  volume={volume}
+                  setVolume={setVolume}
+                  brightness={brightness}
+                  setBrightness={setBrightness}
+                  setAreSettingsOpen={setAreSettingsOpen}
+                />
+              }
               <Routes> 
                 <Route path = "/" element={
                   <Main 
