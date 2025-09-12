@@ -6,23 +6,17 @@ import { useState, useEffect, useRef } from 'react';
 import Login from './pages/Login';
 import { AnimatePresence, motion } from 'framer-motion';
 import Settings from './components/Settings';
-function App() {
+import { useAuthContext } from './hooks/useAuthContext';
+import { UserSettingsProvider, useUserSettings } from './context/UserSettingsContext';
+import { localStorageManager } from './utils/localStorageManager';
+
+function AppContent() {
+  const manager = new localStorageManager();
+  const { user } = useAuthContext();
+  const { volume, brightness, updateVolume, updateBrightness } = useUserSettings();
   const [apps, setApps] = useState(['Terminal']);
   const [openApps, setOpenApps] = useState([]);
   const [focusedAppId, setFocusedAppId] = useState(null);
-  const [volume, setVolume] = useState(() =>{
-    const vol = localStorage.getItem('volume');
-    return vol ? parseInt(vol) : 100;
-  });
-  const [brightness, setBrightness] = useState(() =>{
-    const bright = localStorage.getItem('brightness');
-    return bright ? parseInt(bright) : 100;
-  });
-
-  useEffect(() =>{
-    localStorage.setItem('volume', volume);
-    localStorage.setItem('brightness', brightness);
-  }, [volume, brightness]);
 
   const bringToFront = (appId) =>{
     setFocusedAppId(appId);
@@ -32,8 +26,6 @@ function App() {
     const baseZIndex = 1000;
     return focusedAppId === appId ? baseZIndex + 100 : baseZIndex;
   };
-
-  const [user, setUser] = useState(false);
 
   const [lastKey, setLastKey] = useState(null);
   const lastKeyRef = useRef(null);
@@ -64,6 +56,9 @@ function App() {
     };
   }, [user]);
 
+  const [bgImg, setBgImg] = useState(manager.getBackgroundImage());
+  const [stImg, setStImg] = useState(manager.getStarterImage());
+
   if(!user)
     return (
       <AnimatePresence mode="wait">
@@ -74,7 +69,7 @@ function App() {
           exit={{ opacity: 0, y: -50 }}
           transition={{ duration: 0.5 }}
         >
-          <Login setUser={setUser} user={user}/>
+          <Login/>
         </motion.div>
       </AnimatePresence>
     )
@@ -88,32 +83,30 @@ function App() {
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
         <BrowserRouter>
-          <div className="App w-screen h-screen bg-cover bg-center select-none overflow-hidden relative" style={{ backgroundImage: `url(${rashy})` }}>
+          <div className="App w-screen h-screen bg-cover bg-center select-none overflow-hidden relative" style={{ backgroundImage: `url(${bgImg || rashy})` }}>
               <div 
                   className="absolute inset-0 bg-black transition-opacity duration-300 pointer-events-none z-[999999]"
                   style={{ opacity: Math.max(0, (100 - brightness) / 150) }}
               />
               <Taskbar 
-                setUser={setUser} 
-                user={user}
                 openApps={openApps} 
                 setOpenApps={setOpenApps} 
                 apps={apps} 
                 bringToFront={bringToFront}
                 focusedAppId={focusedAppId}
                 volume={volume}
-                setVolume={setVolume}
+                setVolume={updateVolume}
                 brightness={brightness}
-                setBrightness={setBrightness}
+                setBrightness={updateBrightness}
                 isWinBarOpen={isWinBarOpen}
                 setIsWinBarOpen={setIsWinBarOpen}
               />
               {areSettingsOpen && 
                 <Settings 
                   volume={volume}
-                  setVolume={setVolume}
+                  setVolume={updateVolume}
                   brightness={brightness}
-                  setBrightness={setBrightness}
+                  setBrightness={updateBrightness}
                   setAreSettingsOpen={setAreSettingsOpen}
                 />
               }
@@ -127,7 +120,7 @@ function App() {
                     getAppZIndex={getAppZIndex}
                     focusedAppId={focusedAppId}
                     volume={volume}
-                    setVolume={setVolume}
+                    setVolume={updateVolume}
                   />
                 }/>
               </Routes>
@@ -135,6 +128,14 @@ function App() {
         </BrowserRouter>
       </motion.div>
     </AnimatePresence>
+  );
+}
+
+function App() {
+  return (
+    <UserSettingsProvider>
+      <AppContent />
+    </UserSettingsProvider>
   );
 }
 

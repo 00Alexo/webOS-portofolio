@@ -1,6 +1,9 @@
 import { Power, UserCircle2 } from "lucide-react";
+import { useLogout } from "../hooks/useLogout";
 
-const WinBar = ({user, setUser}) => {
+const WinBar = ({}) => {
+    const { logout } = useLogout();
+
     return (
         <div className="absolute bottom-full left-0 mb-2 ml-2 backdrop-blur-xl border winbar-area
             rounded-xl flex flex-col bg-[#181818] border-white/15
@@ -19,7 +22,7 @@ const WinBar = ({user, setUser}) => {
                     </div>
                 </div>
                 <div>
-                    <Power onClick={() => setUser(null)}
+                    <Power onClick={() => logout()}
                         size="20" className="cursor-pointer text-slate-300 hover:text-red-400 transition-colors duration-200"
                     />
                 </div>
