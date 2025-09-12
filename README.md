@@ -100,28 +100,28 @@ webOS-portofolio/
 - [x] Integrate multiple portfolio projects
 - [x] Create login/authentication system
 
-### Phase 2: Advanced Features (SHIP 2)
+### Phase 2: Advanced Features (SHIP 3, supposed to be ship 2 but not every future is done)
 - [ ] **File System Integration**
   - Add local file explorer
   - Create file management system, saving in local host
 
 - [ ] **Enhanced Terminal**
-  - Add more Linux commands
-  - Create custom shell scripts
+  - Add more Linux commands ✅
+  - Create custom shell scripts 
 
 - [ ] **System Customization**
-  - Multiple desktop wallpapers
-  - Customizable themes
-  - User profile management
+  - Multiple desktop wallpapers ✅
+  - Customizable themes 
+  - User profile management ✅
 
 - [ ] **Additional Applications**
   - Code Editor (VS Code-like)
   - Image Gallery
   - Music Player
-  - Calculator
+  - Calculator ✅
 
 - [ ] **More complex login system**
-  - actual user and password
+  - actual user and password ✅
 
   +lots more
 
